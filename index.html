@@ -8,52 +8,581 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        
-        /* Animated City & Ger District Background Theme */
         .hero-bg {
-            background-color: #0b1329;
+            background-color: #090d16;
             background-image: 
-                radial-gradient(at 10% 20%, rgba(30, 58, 138, 0.4) 0px, transparent 50%),
-                radial-gradient(at 90% 30%, rgba(13, 148, 136, 0.3) 0px, transparent 50%),
-                radial-gradient(at 50% 90%, rgba(99, 102, 241, 0.25) 0px, transparent 50%);
-            position: relative;
-            overflow: hidden;
+                radial-gradient(at 15% 20%, rgba(79, 70, 229, 0.28) 0px, transparent 50%),
+                radial-gradient(at 85% 30%, rgba(14, 165, 233, 0.22) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
         }
-
-        /* Subtle moving background animation representing city life & ger districts */
-        .hero-bg::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image: url('https://images.unsplash.com/photo-1517732306149-e8f829eb588a?q=80&w=1920&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.12;
-            mix-blend-mode: luminosity;
-            animation: pulseGlow 15s ease-in-out infinite alternate;
+        .grid-pattern {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
         }
-
-        @keyframes pulseGlow {
-            0% { transform: scale(1); opacity: 0.1; }
-            100% { transform: scale(1.05); opacity: 0.18; }
-        }
-
         .glass-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
-<body class="bg-[#070b19] text-slate-100 antialiased selection:bg-cyan-500 selection:text-black">
+<body class="bg-slate-50 text-slate-900 antialiased">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 w-full z-40 bg-[#070b19]/90 backdrop-blur-md border-b border-white/10 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between">
-            <div class="flex items-center
+    <nav class="fixed top-0 w-full z-40 bg-[#090d16]/85 backdrop-blur-md border-b border-white/10 text-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+                    ET
+                </div>
+                <span class="font-bold text-lg tracking-tight">Erdenet<span class="text-cyan-400">Transit</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#routes" class="hover:text-white transition">Чиглэл ба Буудлууд</a>
+                <a href="#planner" class="hover:text-white transition">Ухаалаг Төлөвлөгч</a>
+                <a href="#taxi-split" class="hover:text-white transition">Такси Хуваах</a>
+            </div>
+            <a href="#planner" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition shadow-md shadow-indigo-600/20">
+                Цаг тооцоолох
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg grid-pattern text-white pt-28 pb-20 px-4 sm:px-6 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto grid lg:grid-cols-12 gap-10 items-center">
+            <div class="lg:col-span-7 space-y-6">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Орхон аймаг • 8 чиглэл • 192 буудал шууд холбогдсон
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15]">
+                    Автобус хүлээж <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">хоцордог үеийг</span> халъя.
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed">
+                    Эрдэнэт хотын нийтийн тээврийн бодит чиглэлүүд дээр суурилан таны гэрээс гарах яг оновчтой цаг болон өдрийн хичээлийн хуваарийг автоматаар төлөвлөх ухаалаг систем.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="#planner" class="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-indigo-600/30 transition">
+                        Өнөөдрийн хуваарь гаргах →
+                    </a>
+                    <a href="#routes" class="glass-card hover:bg-white/10 text-white font-semibold px-6 py-3.5 rounded-xl transition">
+                        Бүх чиглэл харах
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-lg">
+                    <div>
+                        <div class="text-2xl font-extrabold text-white">8</div>
+                        <div class="text-xs text-slate-400">Үндсэн чиглэл</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-cyan-400">192</div>
+                        <div class="text-xs text-slate-400">Автобусны буудал</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-emerald-400">36</div>
+                        <div class="text-xs text-slate-400">Шугамын автобус</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="glass-card rounded-3xl p-6 shadow-2xl relative">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <span class="text-xs text-slate-400 font-mono">LIVE • DEDTUV TRANSIT SYNC</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+                            <div class="flex justify-between items-center text-xs text-slate-400 mb-1">
+                                <span>Сонгосон чиглэл: Ч:8 Дэнж</span>
+                                <span class="text-emerald-400 font-semibold">● Хэвийн</span>
+                            </div>
+                            <div class="text-lg font-bold text-white">07:10 — Гэрээсээ гарах цаг</div>
+                            <div class="text-xs text-cyan-300 mt-1">Дараагийн автобус: 8915 ОРН (4 минутын дараа)</div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+                            <div class="text-xs text-slate-400 mb-2">Өглөөний цагийн задаргаа</div>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-300">🚶 Буудал хүртэл алхах</span>
+                                    <span class="font-semibold text-white">10 мин</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-300">🚌 Автобусаар зорчих</span>
+                                    <span class="font-semibold text-white">25 мин</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-300">🏫 Сургууль дээр очих</span>
+                                    <span class="font-semibold text-emerald-400">07:45 (15 мин эрт)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 1: Routes & Stops Explorer -->
+    <section id="routes" class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+                <span class="text-indigo-600 font-bold text-xs uppercase tracking-wider">Нийтийн тээврийн сүлжээ</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Эрдэнэтийн автобусны чиглэлүүд</h2>
+                <p class="text-slate-500 text-sm mt-2">Дурын чиглэл дээр дарж буудлын дараалал, ирэх хугацаа болон шугамын автобусуудыг харна уу.</p>
+            </div>
+            <div class="text-xs bg-indigo-50 text-indigo-700 font-semibold px-4 py-2.5 rounded-xl border border-indigo-100">
+                Эх сурвалж: dedtuv.erdenet.mn/transit
+            </div>
+        </div>
+
+        <div id="routesGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+    </section>
+
+    <!-- Section 2: Smart Commute Calculator & Sequential Daily Schedule -->
+    <section id="planner" class="bg-white border-y border-slate-200 py-20 px-4 sm:px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-cyan-600 font-bold text-xs uppercase tracking-wider">Ухаалаг Төлөвлөгч</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Цаг тооцоолуур ба Өдрийн цуваа хуваарь</h2>
+                <p class="text-slate-500 text-sm mt-2">Чиглэл болон хичээлийн цагаа оруулмагц таны тухайн өдрийн бүх цагийн хуваарь цуваа хэлбэрээр автоматаар үүснэ.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                <div class="lg:col-span-5 bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-lg text-slate-800 mb-5">1. Өглөөний мэдээллээ оруулах</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Гэр хорооллын чиглэл</label>
+                            <select id="calcRoute" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Хичээл эхлэх</label>
+                                <input type="time" id="calcStartTime" value="08:00" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Хичээл тарах</label>
+                                <input type="time" id="calcEndTime" value="13:30" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Буудал хүртэл алхах (минут)</label>
+                            <input type="number" id="calcWalk" value="10" min="1" max="60" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Замын нөхцөл / Цаг агаар</label>
+                            <select id="calcWeather" class="w-full p-3 bg-white border border-slate-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="0">☀️ Энгийн өдөр (+0 мин)</option>
+                                <option value="15" selected>🚦 Өглөөний оргил ачаалал (+15 мин)</option>
+                                <option value="25">❄️ Цас / Хүйтэн / Хальтиргаа (+25 мин)</option>
+                            </select>
+                        </div>
+
+                        <button onclick="generateFullSchedule()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-600/20 transition cursor-pointer">
+                            Хуваарь болон гарах цагийг тооцоолох
+                        </button>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-3">➕ Өдрийн хуваарьт нэмэлт хичээл/ажил нэмэх</h4>
+                        <div class="flex gap-2">
+                            <input type="time" id="customTime" value="15:00" class="p-2.5 bg-white border border-slate-300 rounded-xl text-xs font-medium w-28">
+                            <input type="text" id="customTitle" placeholder="Жишээ: Давтлага, Номын сан..." class="p-2.5 bg-white border border-slate-300 rounded-xl text-xs flex-grow">
+                            <button onclick="addCustomTask()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 rounded-xl transition cursor-pointer">Нэмэх</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 space-y-6">
+                    <div id="alertBanner" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Гэрээсээ гарах оновчтой цаг</span>
+                            <div class="text-3xl font-extrabold text-emerald-600 mt-0.5" id="bigDepartureTime">07:05</div>
+                            <p class="text-xs text-emerald-800 mt-1" id="bigAdviceText">Энэ цагт гарвал хичээлээс 10 минутын өмнө амжиж очно.</p>
+                        </div>
+                        <div id="taxiBadge" class="hidden bg-amber-100 border border-amber-300 text-amber-900 px-4 py-3 rounded-xl text-xs max-w-xs">
+                            <strong>⚠️ Хоцрох эрсдэлтэй!</strong> Замын ачаалал их байгаа тул нэг чиглэлийн сурагчидтай такси хувааж суухыг зөвлөж байна.
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-bold text-lg text-slate-900">2. Таны өдрийн цуваа хуваарь (Timeline)</h3>
+                            <span class="text-xs text-slate-400">Автоматаар шинэчлэгдэнэ</span>
+                        </div>
+
+                        <div id="timelineContainer" class="relative border-l-2 border-indigo-200 ml-3 space-y-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Student Taxi Split-Fare Quick Board -->
+    <section id="taxi-split" class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+        <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl p-8 sm:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="space-y-3 max-w-xl">
+                <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-bold px-3 py-1 rounded-full">Автобус хоцорсон үеийн шийдэл</span>
+                <h3 class="text-2xl sm:text-3xl font-extrabold">Нэг чиглэлийн сурагчидтай такси хуваах</h3>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Хэрэв автобус саатаж хичээлээсээ хоцрох эрсдэл үүсвэл ижил буудлаас хөдөлж буй 3–4 сурагч нэгдэж таксины зардлыг 4 дахин хямдруулах боломжтой.
+                </p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 w-full md:w-80 space-y-3">
+                <div class="text-xs font-semibold text-cyan-300">Яг одоо бүрдэж буй багууд:</div>
+                <div class="bg-white/5 p-3 rounded-xl flex justify-between items-center text-xs">
+                    <div>
+                        <div class="font-bold">Ч:8 Дэнж → 1-р сургууль</div>
+                        <div class="text-slate-400">07:15 хөдөлнө • 1 суудал үлдсэн</div>
+                    </div>
+                    <span class="bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-lg">1,000₮</span>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl flex justify-between items-center text-xs">
+                    <div>
+                        <div class="font-bold">Ч:5 Говил → Төв</div>
+                        <div class="text-slate-400">07:20 хөдөлнө • 2 суудал үлдсэн</div>
+                    </div>
+                    <span class="bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-lg">1,250₮</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-xs border-t border-slate-800">
+        <p>Erdenet Student Transit & Planner • Орхон Аймаг Хакатон Төсөл © 2026</p>
+    </footer>
+
+    <!-- Route Detail Modal -->
+    <div id="routeModal" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 font-bold cursor-pointer">✕</button>
+            
+            <div class="flex items-center gap-2 text-xs font-bold text-indigo-600 uppercase mb-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                Шууд мэдээлэл • dedtuv.erdenet.mn
+            </div>
+            <h3 id="modalTitle" class="text-2xl font-extrabold text-slate-900">Ч:8 Урд Хабитат – Дэнж</h3>
+            <p id="modalDesc" class="text-sm text-slate-500 mt-1">Нийт зорчих хугацаа: ~35 минут • Хүлээлгийн зай: 12 мин</p>
+
+            <div class="mt-5">
+                <div class="text-xs font-bold text-slate-700 uppercase mb-2">Шугамд явж буй автобусууд:</div>
+                <div id="modalBuses" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div class="mt-6">
+                <div class="text-xs font-bold text-slate-700 uppercase mb-3">Буудлуудын дараалал ба Ирэх цаг (ETA):</div>
+                <div id="modalStops" class="border-l-2 border-indigo-500 ml-2 space-y-4"></div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end gap-3">
+                <button onclick="selectRouteForPlanner()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl text-sm transition cursor-pointer">
+                    Энэ чиглэлээр өдрийн хуваарь тооцоолох
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const routesData = [
+            {
+                id: "ch1",
+                code: "Ч:1 – Ч:2",
+                name: "Их Залуу – Шанд",
+                duration: 25,
+                interval: "10-15 мин",
+                buses: ["0216 ОРХ", "7316 ОРО", "8915 ОРН (Foton1)"],
+                stops: [
+                    { name: "Их Залуу эцсийн буудал", eta: "Хөдөлсөн" },
+                    { name: "Шанд 1-р буудал", eta: "4 минутын дараа" },
+                    { name: "Хүрэнбулаг", eta: "11 минутын дараа" },
+                    { name: "Үйлчилгээний төв / Төв", eta: "19 минутын дараа" },
+                    { name: "Баян-Өндөр цогцолбор", eta: "25 минутын дараа" }
+                ]
+            },
+            {
+                id: "ch3",
+                code: "Ч:3",
+                name: "Баян Тал",
+                duration: 20,
+                interval: "15 мин",
+                buses: ["8726 ОРО", "8451 ОРО"],
+                stops: [
+                    { name: "Баян Тал эцэс", eta: "2 минутын дараа" },
+                    { name: "Дэнж уулзвар", eta: "8 минутын дараа" },
+                    { name: "Оюутны гудамж", eta: "14 минутын дараа" },
+                    { name: "Хотын төв", eta: "20 минутын дараа" }
+                ]
+            },
+            {
+                id: "ch4",
+                code: "Ч:4",
+                name: "Сагсай",
+                duration: 30,
+                interval: "15-20 мин",
+                buses: ["4457 ОРА", "4522 ОРА", "8930 ОРН (Foton2)"],
+                stops: [
+                    { name: "Сагсай эцэс", eta: "Хөдөлсөн" },
+                    { name: "Цагаанчулуут", eta: "9 минутын дараа" },
+                    { name: "Баянцагаан", eta: "18 минутын дараа" },
+                    { name: "Төв буудал", eta: "30 минутын дараа" }
+                ]
+            },
+            {
+                id: "ch5",
+                code: "Ч:5",
+                name: "Говил",
+                duration: 35,
+                interval: "12-15 мин",
+                buses: ["8575 ОРН", "8736 ОРО", "8935 ОРН (Foton3)"],
+                stops: [
+                    { name: "Говил эцэс", eta: "3 минутын дараа" },
+                    { name: "Говил сургууль", eta: "10 минутын дараа" },
+                    { name: "Автовокзал", eta: "22 минутын дараа" },
+                    { name: "Эрдэнэт үйлдвэр / Төв", eta: "35 минутын дараа" }
+                ]
+            },
+            {
+                id: "ch6",
+                code: "Ч:6",
+                name: "Тосгон – Пирамид – Зээл",
+                duration: 20,
+                interval: "10 мин",
+                buses: ["7386 ОРО", "5365 ОРН", "8925 ОРН (Foton5)"],
+                stops: [
+                    { name: "Тосгон", eta: "1 минутын дараа" },
+                    { name: "Пирамид худалдааны төв", eta: "7 минутын дараа" },
+                    { name: "Их Зээл", eta: "13 минутын дараа" },
+                    { name: "4-р микро", eta: "20 минутын дараа" }
+                ]
+            },
+            {
+                id: "ch7",
+                code: "Ч:7",
+                name: "Вокзал – Төгөл",
+                duration: 25,
+                interval: "15 мин",
+                buses: ["7356 ОРО", "1036 ОРО", "8960 ОРН (Foton6)"],
+                stops: [
+                    { name: "Төмөр замын вокзал", eta: "5 минутын дараа" },
+                    { name: "Төгөл их дэлгүүр", eta: "14 минутын дараа" },
+                    { name: "3-р микро", eta: "20 минутын дараа" },
+                    { name: "Сургуулийн бүс", eta: "25 минутын дараа" }
+                ]
+            },
+            {
+                id: "ch8",
+                code: "Ч:8",
+                name: "Урд Хабитат – Дэнж – Даниста",
+                duration: 35,
+                interval: "12 мин",
+                buses: ["6689 ОРА", "8256 ОРО", "8940 ОРН (Foton7)"],
+                stops: [
+                    { name: "Урд Хабитат", eta: "Хөдөлсөн" },
+                    { name: "Дэнж төв буудал", eta: "8 минутын дараа" },
+                    { name: "Уртын гол", eta: "18 минутын дараа" },
+                    { name: "Даниста", eta: "26 минутын дараа" },
+                    { name: "Хотын төв / Сургуулиуд", eta: "35 минутын дараа" }
+                ]
+            },
+            {
+                id: "ch9",
+                code: "Ч:9",
+                name: "Яргуйт – Автовокзал",
+                duration: 30,
+                interval: "15 мин",
+                buses: ["5911 ОРА", "5578 ОРО", "8920 ОРН (Foton8)"],
+                stops: [
+                    { name: "Яргуйт эцэс", eta: "4 минутын дараа" },
+                    { name: "Яргуйт дунд буудал", eta: "12 минутын дараа" },
+                    { name: "Автовокзал", eta: "21 минутын дараа" },
+                    { name: "Үйлчилгээний төв", eta: "30 минутын дараа" }
+                ]
+            }
+        ];
+
+        let selectedModalRouteId = "ch8";
+        let customTasks = [];
+
+        function init() {
+            const grid = document.getElementById('routesGrid');
+            const select = document.getElementById('calcRoute');
+            if (!grid || !select) return;
+
+            routesData.forEach(route => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-5 border border-slate-200 hover:border-indigo-400 hover:shadow-lg transition cursor-pointer group flex flex-col justify-between";
+                card.onclick = () => openRouteModal(route.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-indigo-50 text-indigo-700 font-extrabold text-xs px-3 py-1 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition">${route.code}</span>
+                            <span class="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Шууд
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base group-hover:text-indigo-600 transition">${route.name}</h3>
+                        <p class="text-xs text-slate-500 mt-1.5">Дундаж хугацаа: <strong>${route.duration} мин</strong> • Зай: ${route.interval}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600">
+                        <span>Буудлууд харах (${route.stops.length})</span>
+                        <span>→</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+
+                const opt = document.createElement('option');
+                opt.value = route.id;
+                opt.text = `${route.code}: ${route.name} (~${route.duration} мин)`;
+                if (route.id === "ch8") opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            generateFullSchedule();
+        }
+
+        function openRouteModal(routeId) {
+            selectedModalRouteId = routeId;
+            const route = routesData.find(r => r.id === routeId);
+            if (!route) return;
+
+            document.getElementById('modalTitle').innerText = `${route.code} — ${route.name}`;
+            document.getElementById('modalDesc').innerText = `Нийт зорчих хугацаа: ~${route.duration} минут • Хүлээлгийн зай: ${route.interval}`;
+
+            const busesDiv = document.getElementById('modalBuses');
+            busesDiv.innerHTML = route.buses.map(b => 
+                `<span class="bg-slate-100 border border-slate-200 text-slate-800 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">🚌 ${b}</span>`
+            ).join('');
+
+            const stopsDiv = document.getElementById('modalStops');
+            stopsDiv.innerHTML = route.stops.map((s, idx) => `
+                <div class="relative pl-5">
+                    <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full ${idx === 0 ? 'bg-indigo-600 ring-4 ring-indigo-100' : 'bg-slate-300'}"></span>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-semibold text-slate-800">${s.name}</span>
+                        <span class="text-xs font-medium px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">${s.eta}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('routeModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('routeModal').classList.add('hidden');
+        }
+
+        function selectRouteForPlanner() {
+            document.getElementById('calcRoute').value = selectedModalRouteId;
+            closeModal();
+            generateFullSchedule();
+            document.getElementById('planner').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function formatTime(totalMins) {
+            let m = totalMins % (24 * 60);
+            if (m < 0) m += 24 * 60;
+            const h = Math.floor(m / 60);
+            const mins = m % 60;
+            return `${String(h).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+        }
+
+        function parseTime(str) {
+            const [h, m] = str.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        function generateFullSchedule() {
+            const routeId = document.getElementById('calcRoute').value;
+            const route = routesData.find(r => r.id === routeId);
+            if (!route) return;
+
+            const startStr = document.getElementById('calcStartTime').value || "08:00";
+            const endStr = document.getElementById('calcEndTime').value || "13:30";
+            const walkMins = parseInt(document.getElementById('calcWalk').value) || 10;
+            const weatherBuffer = parseInt(document.getElementById('calcWeather').value) || 0;
+
+            const schoolStartMins = parseTime(startStr);
+            const schoolEndMins = parseTime(endStr);
+
+            const arriveSchoolMins = schoolStartMins - 10;
+            const boardBusMins = arriveSchoolMins - (route.duration + weatherBuffer);
+            const leaveHomeMins = boardBusMins - walkMins;
+            const wakeUpMins = leaveHomeMins - 35;
+
+            document.getElementById('bigDepartureTime').innerText = formatTime(leaveHomeMins);
+            
+            const taxiBadge = document.getElementById('taxiBadge');
+            const alertBanner = document.getElementById('alertBanner');
+            if (weatherBuffer >= 15 || route.duration >= 35) {
+                taxiBadge.classList.remove('hidden');
+                alertBanner.className = "bg-amber-50/70 border border-amber-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4";
+            } else {
+                taxiBadge.classList.add('hidden');
+                alertBanner.className = "bg-emerald-50 border border-emerald-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4";
+            }
+
+            let scheduleItems = [
+                { time: wakeUpMins, title: "Өглөө сэрэх & Бэлтгэх", desc: "Цүнх, хичээлийн хэрэгслээ шалгах (35 мин)", color: "bg-slate-400", tag: "Өглөө" },
+                { time: leaveHomeMins, title: "🚪 Гэрээсээ гарах (Яг цагтаа!)", desc: `${route.stops[0].name} буудал руу ${walkMins} мин алхана`, color: "bg-rose-500", tag: "Чухал" },
+                { time: boardBusMins, title: `🚌 ${route.code} автобусанд суух`, desc: `Чиглэл: ${route.name} (${route.duration + weatherBuffer} мин зорчино)`, color: "bg-indigo-600", tag: "Тээвэр" },
+                { time: arriveSchoolMins, title: "🏫 Сургууль дээр ирэх", desc: "Хичээл эхлэхээс 10 минутын өмнө ангидаа орсон байна", color: "bg-emerald-500", tag: "Амжилттай" },
+                { time: schoolStartMins, title: "📚 Хичээл эхлэх цаг", desc: "Өдрийн үндсэн хичээлүүд", color: "bg-cyan-600", tag: "Хичээл" },
+                { time: schoolEndMins, title: "🔔 Хичээл тарах цаг", desc: `Буцах ${route.code} автобусны хуваарийг шалгах`, color: "bg-indigo-500", tag: "Тарах" }
+            ];
+
+            customTasks.forEach(task => {
+                scheduleItems.push({
+                    time: parseTime(task.time),
+                    title: `📌 ${task.title}`,
+                    desc: "Хэрэглэгчийн нэмсэн хувийн төлөвлөгөө",
+                    color: "bg-purple-600",
+                    tag: "Нэмэлт"
+                });
+            });
+
+            scheduleItems.sort((a, b) => a.time - b.time);
+
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = scheduleItems.map(item => `
+                <div class="relative pl-6">
+                    <span class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full ${item.color} ring-4 ring-white shadow"></span>
+                    <div class="bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 rounded-2xl p-4 transition">
+                        <div class="flex items-center justify-between gap-2 mb-1">
+                            <span class="font-mono font-extrabold text-sm text-indigo-700">${formatTime(item.time)}</span>
+                            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">${item.tag}</span>
+                        </div>
+                        <div class="font-bold text-slate-900 text-sm">${item.title}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">${item.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addCustomTask() {
+            const timeVal = document.getElementById('customTime').value;
+            const titleVal = document.getElementById('customTitle').value.trim();
+            if (!timeVal || !titleVal) return;
+
+            customTasks.push({ time: timeVal, title: titleVal });
+            document.getElementById('customTitle').value = "";
+            generateFullSchedule();
+        }
+
+        init();
+    </script>
+</body>
+</html>
