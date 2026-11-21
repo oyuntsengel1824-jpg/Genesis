@@ -1,14 +1,383 @@
-<!-- APPLICATION LOGIC -->
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GENESIS // Erdenet Family Transit & Daily Sync</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <script>
-    // ==========================================
-    // 1. STATE & DATA MODELS (ERDENET CONTEXT)
-    // ==========================================
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            void: '#09090B',
+            surface: '#121216',
+            card: '#18181D',
+            border: '#27272A',
+            lime: '#A3E635',
+            mint: '#10B981',
+            indigo: '#8B5CF6',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #09090B;
+      color: #F4F4F5;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #09090B; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+    .bg-grid-pattern {
+      background-image: linear-gradient(to right, rgba(39, 39, 42, 0.35) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(39, 39, 42, 0.35) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .glass-panel {
+      background: rgba(18, 18, 22, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid #27272A;
+    }
+    .pulse-ring {
+      animation: pulseRing 2.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.8); opacity: 0.9; }
+      80%, 100% { transform: scale(2.4); opacity: 0; }
+    }
+    .brutal-shadow {
+      box-shadow: 4px 4px 0px #27272A;
+    }
+  </style>
+</head>
+<body class="bg-void text-zinc-100 antialiased selection:bg-lime selection:text-void">
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <header class="sticky top-0 z-40 glass-panel border-b border-zinc-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-lime text-void flex items-center justify-center font-display font-extrabold text-xl tracking-tighter brutal-shadow">
+          G
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-bold text-lg tracking-tight text-white">GENESIS</span>
+            <span class="hidden sm:inline-block text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-zinc-800 text-lime border border-lime/30">ERDENET LIVE</span>
+          </div>
+          <p class="text-[11px] text-zinc-400 hidden md:block" data-i18n="tagline">Family Transit & Daily Sync</p>
+        </div>
+      </div>
+
+      <div class="flex items-center bg-zinc-900 p-1 rounded-full border border-zinc-800">
+        <button id="btn-role-parent" onclick="setRole('parent')" class="px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-lime text-void shadow-sm flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span data-i18n="parentView">Parent View</span>
+        </button>
+        <button id="btn-role-kid" onclick="setRole('kid')" class="px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all text-zinc-400 hover:text-white flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span data-i18n="kidView">Kid Mode</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden lg:flex items-center gap-1.5 text-xs font-mono text-zinc-400 bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-800">
+          <span class="w-2 h-2 rounded-full bg-mint animate-pulse"></span>
+          <span id="live-clock">16:40:00</span>
+          <span class="text-zinc-600">|</span>
+          <span>-14°C Эрдэнэт</span>
+        </div>
+        <button id="lang-toggle" onclick="toggleLang()" class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-bold tracking-wider text-zinc-200 transition">
+          EN / МОН
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="relative border-b border-zinc-800 overflow-hidden">
+    <div class="relative w-full h-[360px] sm:h-[420px] bg-gradient-to-b from-[#0c1220] via-[#131826] to-[#09090B]">
+      <canvas id="heroCanvas" class="w-full h-full block"></canvas>
+      <div class="absolute inset-0 bg-gradient-to-r from-void/95 via-void/70 to-transparent pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-void/30 pointer-events-none"></div>
+
+      <div class="absolute inset-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+        <div class="max-w-2xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/90 border border-lime/40 text-xs font-medium text-lime backdrop-blur-md">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-lime"></span>
+            </span>
+            <span id="hero-status-pill" data-i18n="heroPill">2 Kids Active • Live Erdenet Transit Synced</span>
+          </div>
+
+          <h1 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+            <span data-i18n="heroTitle1">Smart Family Sync &</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-lime via-mint to-indigo" data-i18n="heroTitle2">Erdenet Live Transit</span>
+          </h1>
+
+          <p class="text-sm sm:text-base text-zinc-300 max-w-xl leading-relaxed" data-i18n="heroDesc">
+            From traditional Ger districts on Bayan-Öndör hills to central avenues—track which exact bus your kids board, view live arrival times, and coordinate daily family schedules in real time.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <a href="#transit-section" class="px-5 py-2.5 rounded-xl bg-lime hover:bg-lime/90 text-void font-bold text-sm transition transform active:scale-95 brutal-shadow flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span data-i18n="btnLiveMap">Live Bus Map</span>
+            </a>
+            <a href="#planner-section" class="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-700 font-semibold text-sm transition flex items-center gap-2">
+              <svg class="w-4 h-4 text-indigo" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+              <span data-i18n="btnPlanner">Daily Family Planner</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 bg-grid-pattern">
+
+    <section id="role-console">
+      <div id="parent-dashboard-panel" class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-wider text-lime" data-i18n="parentRadarTag">FAMILY TELEMETRY // ACTIVE</span>
+            <h2 class="font-display text-2xl font-bold text-white" data-i18n="kidsLiveTitle">Children Live Status & Bus Boarding</h2>
+          </div>
+          <button onclick="simulateKidPing()" class="self-start sm:self-auto px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-200 flex items-center gap-2 transition">
+            <svg class="w-4 h-4 text-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span data-i18n="requestLocation">Ping GPS Check-in</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5" id="kids-cards-container"></div>
+      </div>
+
+      <div id="kid-dashboard-panel" class="hidden space-y-5">
+        <div class="rounded-2xl bg-surface border border-indigo/50 p-6 brutal-shadow">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo/20 text-indigo text-xs font-bold">
+                <span>STUDENT SMART CARD // NFC READY</span>
+              </div>
+              <h2 class="font-display text-2xl sm:text-3xl font-bold text-white" data-i18n="kidWelcome">Сайн уу, Тэмүүлэн! (Hi, Temuulen!)</h2>
+              <p class="text-sm text-zinc-400" data-i18n="kidSub">Tap when you board a bus or arrive at school so Mom & Dad know you're safe.</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="kidBoardBusAction()" class="px-5 py-3.5 rounded-2xl bg-lime hover:bg-lime/90 text-void font-extrabold text-sm flex items-center gap-2.5 transition transform active:scale-95 brutal-shadow">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span data-i18n="btnTapBus">Tap Bus Card (Boarded)</span>
+              </button>
+              <button onclick="kidSafePingAction()" class="px-5 py-3.5 rounded-2xl bg-mint hover:bg-mint/90 text-void font-extrabold text-sm flex items-center gap-2.5 transition transform active:scale-95">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span data-i18n="btnImSafe">I'm Safe at Stop</span>
+              </button>
+              <button onclick="kidSosAction()" class="px-4 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm flex items-center gap-2 transition">
+                <span>SOS</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-5 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <label for="kid-bus-select" class="text-xs font-semibold uppercase tracking-wider text-zinc-400" data-i18n="selectBusLabel">Select Current Bus:</label>
+              <select id="kid-bus-select" class="bg-zinc-900 border border-zinc-700 text-white text-sm rounded-xl px-3.5 py-2 focus:outline-none focus:border-lime">
+                <option value="BUS-204">Ч:2 • Эрдэнэт Үйлдвэр - 5-р Микро (04-82 ОРХ)</option>
+                <option value="BUS-101">Ч:1 • Найрамдал - 1-р Хороолол (11-45 ОРХ)</option>
+                <option value="BUS-309">Ч:3 • Баян-Өндөр - Төв Талбай (88-19 ОРХ)</option>
+                <option value="BUS-402">Ч:4 • Хүрэнбулаг - 3-р Хороолол (52-10 ОРХ)</option>
+              </select>
+            </div>
+            <div class="text-xs text-zinc-400 font-mono">
+              Current Status: <span id="kid-current-status-text" class="text-lime font-bold">On Bus Ч:2 (Heading to 5-р Микро)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="transit-section" class="space-y-4">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-mint/15 text-mint border border-mint/30 text-[11px] font-mono font-bold">DEDTUV.ERDENET.MN // LIVE FEED</span>
+          </div>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mt-1" data-i18n="transitTitle">Erdenet City Live Bus Map & Arrivals</h2>
+        </div>
+
+        <div class="flex flex-wrap gap-2" id="route-filters">
+          <button onclick="filterRoute('ALL')" data-route="ALL" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-lime text-void transition">
+            Бүгд / All (4)
+          </button>
+          <button onclick="filterRoute('Ч:1')" data-route="Ч:1" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:1 Найрамдал - 1-р хор
+          </button>
+          <button onclick="filterRoute('Ч:2')" data-route="Ч:2" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:2 Үйлдвэр - 5-р микро
+          </button>
+          <button onclick="filterRoute('Ч:3')" data-route="Ч:3" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:3 Баян-Өндөр - Төв
+          </button>
+          <button onclick="filterRoute('Ч:4')" data-route="Ч:4" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:4 Хүрэнбулаг - 3-р хор
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 rounded-2xl bg-surface border border-zinc-800 overflow-hidden flex flex-col">
+          <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/60">
+            <div class="flex items-center gap-2 text-xs font-semibold text-zinc-300">
+              <span class="w-2 h-2 rounded-full bg-lime animate-ping"></span>
+              <span>GPS Telemetry: Orkhon / Erdenet Grid</span>
+            </div>
+            <span class="text-[11px] font-mono text-zinc-400" data-i18n="mapHint">Click any stop or bus for live ETA</span>
+          </div>
+
+          <div class="relative w-full aspect-[16/11] bg-[#0B0E14] select-none overflow-hidden">
+            <svg id="erdenet-map-svg" viewBox="0 0 800 550" class="w-full h-full">
+              <defs>
+                <pattern id="mapGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#181D27" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="800" height="550" fill="url(#mapGrid)" />
+              <path d="M0,0 L800,0 L800,150 Q620,190 430,130 T0,165 Z" fill="#131926" opacity="0.85" />
+              <text x="580" y="55" fill="#52525B" font-size="11" font-family="Space Grotesk" font-weight="700" letter-spacing="1.5">БАЯН-ӨНДӨР / GER DISTRICT</text>
+              <path d="M560,390 L800,360 L800,550 L520,550 Z" fill="#16161E" stroke="#27272A" stroke-dasharray="4 4" />
+              <text x="615" y="485" fill="#71717A" font-size="11" font-family="Space Grotesk" font-weight="700">ЭРДЭНЭТ ҮЙЛДВЭР (EMC)</text>
+
+              <path d="M 70,310 L 230,300 L 410,285 L 570,310 L 710,415" fill="none" stroke="#27272A" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M 460,115 L 430,205 L 410,285 L 365,400 L 240,465" fill="none" stroke="#27272A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+
+              <g id="map-stops-layer"></g>
+              <g id="map-buses-layer"></g>
+              <g id="map-kids-layer"></g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 rounded-2xl bg-surface border border-zinc-800 flex flex-col justify-between">
+          <div>
+            <div class="p-4 border-b border-zinc-800 bg-zinc-900/60 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400" data-i18n="selectedStopLabel">SELECTED BUS STOP</span>
+                <h3 id="selected-stop-name" class="font-display text-lg font-bold text-white flex items-center gap-2">
+                  <span>1-р хороолол (1st Microdistrict)</span>
+                </h3>
+              </div>
+              <span id="selected-stop-code" class="px-2.5 py-1 rounded-lg bg-zinc-800 border border-zinc-700 font-mono text-xs text-lime font-bold">
+                STOP #04
+              </span>
+            </div>
+
+            <div class="px-4 py-2.5 border-b border-zinc-800/80 flex items-center gap-1.5 overflow-x-auto" id="stop-selector-pills"></div>
+            <div class="p-4 space-y-3" id="live-arrivals-list"></div>
+          </div>
+
+          <div class="p-4 border-t border-zinc-800 bg-zinc-900/40 rounded-b-2xl">
+            <div class="flex items-center justify-between text-xs text-zinc-400">
+              <span data-i18n="childAboardHighlight">Highlighted badge shows which bus your child is aboard</span>
+              <span class="font-mono text-mint">● GPS ONLINE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="planner-section" class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
+      <div class="lg:col-span-8 rounded-2xl bg-surface border border-zinc-800 p-5 sm:p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-wider text-indigo">FAMILY DAILY SYNC // SCHEDULE</span>
+            <h2 class="font-display text-2xl font-bold text-white" data-i18n="plannerTitle">Today's Routine & Transit Plan</h2>
+          </div>
+
+          <div class="flex items-center gap-3 bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800">
+            <div class="text-right">
+              <div class="text-[11px] text-zinc-400" data-i18n="completionLabel">Daily Completion</div>
+              <div id="planner-progress-text" class="text-sm font-bold text-lime font-mono">0 / 0 Done (0%)</div>
+            </div>
+            <div class="w-12 h-12 rounded-full border-4 border-zinc-800 flex items-center justify-center relative">
+              <span id="planner-percent-badge" class="text-xs font-extrabold text-white">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="add-task-form" onsubmit="handleAddTask(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-zinc-900/80 p-3 rounded-xl border border-zinc-800">
+          <input type="text" id="task-title-input" required placeholder="Add task (e.g. Board Bus Ч:2)..." class="sm:col-span-5 bg-void border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-lime" />
+          <input type="time" id="task-time-input" value="17:30" required class="sm:col-span-2 bg-void border border-zinc-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime" />
+          <select id="task-kid-input" class="sm:col-span-2 bg-void border border-zinc-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime">
+            <option value="Тэмүүлэн">Тэмүүлэн</option>
+            <option value="Анужин">Анужин</option>
+          </select>
+          <select id="task-bus-input" class="sm:col-span-2 bg-void border border-zinc-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime">
+            <option value="Ч:2">Bus Ч:2</option>
+            <option value="Ч:1">Bus Ч:1</option>
+            <option value="Ч:3">Bus Ч:3</option>
+            <option value="Walk">Walk</option>
+          </select>
+          <button type="submit" class="sm:col-span-1 bg-lime hover:bg-lime/90 text-void font-extrabold rounded-lg py-2 px-3 text-sm flex items-center justify-center transition">
+            +
+          </button>
+        </form>
+
+        <div id="planner-tasks-list" class="space-y-3"></div>
+      </div>
+
+      <div class="lg:col-span-4 rounded-2xl bg-surface border border-zinc-800 p-5 sm:p-6 flex flex-col justify-between space-y-4">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-mint">REAL-TIME STREAM</span>
+              <h3 class="font-display text-lg font-bold text-white" data-i18n="activityTitle">Live Alerts & Check-ins</h3>
+            </div>
+            <span class="w-2.5 h-2.5 rounded-full bg-mint animate-ping"></span>
+          </div>
+
+          <div id="activity-feed-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
+        </div>
+
+        <div class="pt-3 border-t border-zinc-800 text-[11px] text-zinc-500 flex items-center justify-between">
+          <span>Orkhon Smart Transit API v2.4</span>
+          <button onclick="clearActivityLog()" class="text-zinc-400 hover:text-white underline">Clear</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-zinc-800 mt-12 py-6 bg-void">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+      <div class="flex items-center gap-2">
+        <span class="w-5 h-5 rounded bg-lime text-void font-display font-extrabold flex items-center justify-center text-[11px]">G</span>
+        <span class="font-semibold text-zinc-300">GENESIS // Erdenet Family Transit & Planner</span>
+      </div>
+      <div>
+        <span>Inspired by Codely.mn & Dedtuv Erdenet Transit • Built for Orkhon Families</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
     let currentLang = 'en';
-    let currentRole = 'parent'; // 'parent' | 'kid'
+    let currentRole = 'parent';
     let activeRouteFilter = 'ALL';
     let selectedStopId = 'STOP-1R';
 
-    // Start empty or load from localStorage so it doesn't show hardcoded mock demo data on fresh load
     let plannerTasks = JSON.parse(localStorage.getItem('genesis_planner_tasks')) || [];
 
     const i18n = {
@@ -56,9 +425,9 @@
         btnTapBus: "Карт Уншуулах",
         btnImSafe: "Би Аюулгүй Байна",
         selectBusLabel: "Автобус сонгох:",
-        transitTitle: "Эрдэнэт Хотын Автобусны Шууд Зуглал",
+        transitTitle: "Эрдэнэт Хотын Автобусны Шууд Зураг",
         mapHint: "Цагийн хуваарь харахын тулд буудал эсвэл автобус дээр дарна уу",
-        selectedStopLabel: "СОНГОСОН БУУДԱЛ",
+        selectedStopLabel: "СОНГОСОН БУУДАЛ",
         childAboardHighlight: "Тодруулсан шошго нь таны хүүхдийн яваа автобусыг заана",
         plannerTitle: "Өдрийн Хуваарь ба Тээврийн Төлөвлөгөө",
         completionLabel: "Гүйцэтгэл",
@@ -84,7 +453,6 @@
       { time: '15:50', text: 'System synced live GPS telemetry for Orkhon Region', type: 'system' }
     ];
 
-    // Initialize UI on load
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
       renderKidsDashboard();
@@ -134,12 +502,12 @@
     function showToast(message, type = 'success') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
-      toast.className = `p-4 rounded-xl border pointer-events-auto shadow-xl flex items-center gap-3 transition transform translate-y-2 opacity-0 ${
+      toast.className = `p-4 rounded-xl border pointer-events-auto shadow-xl flex items-center gap-3 transition transform translate-y-2 opacity-0 \${
         type === 'success' ? 'bg-surface border-lime/40 text-white' : 'bg-surface border-rose-500/40 text-white'
       }`;
       toast.innerHTML = `
-        <span class="w-2.5 h-2.5 rounded-full ${type === 'success' ? 'bg-lime' : 'bg-rose-500'} animate-pulse"></span>
-        <div class="text-xs font-semibold">${message}</div>
+        <span class="w-2.5 h-2.5 rounded-full \${type === 'success' ? 'bg-lime' : 'bg-rose-500'} animate-pulse"></span>
+        <div class="text-xs font-semibold">\${message}</div>
       `;
       container.appendChild(toast);
       setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
@@ -149,7 +517,6 @@
       }, 3500);
     }
 
-    // Render Parent Kids Cards
     function renderKidsDashboard() {
       const container = document.getElementById('kids-cards-container');
       container.innerHTML = kidsData.map(kid => `
@@ -157,11 +524,11 @@
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-700 flex items-center justify-center text-2xl">
-                ${kid.avatar}
+                \${kid.avatar}
               </div>
               <div>
-                <h3 class="font-display font-bold text-white text-base">${kid.name}</h3>
-                <p class="text-xs text-zinc-400">${kid.school}</p>
+                <h3 class="font-display font-bold text-white text-base">\${kid.name}</h3>
+                <p class="text-xs text-zinc-400">\${kid.school}</p>
               </div>
             </div>
             <span class="px-2.5 py-1 rounded-full bg-lime/10 text-lime border border-lime/30 text-[11px] font-mono font-bold">
@@ -172,258 +539,25 @@
           <div class="bg-zinc-900/80 rounded-xl p-3.5 border border-zinc-800/80 space-y-2">
             <div class="flex items-center justify-between text-xs">
               <span class="text-zinc-400">Current Status:</span>
-              <span class="font-bold text-lime">${kid.status}</span>
+              <span class="font-bold text-lime">\${kid.status}</span>
             </div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-zinc-400">Last Ping:</span>
-              <span class="font-mono text-zinc-300">${kid.time} (Battery: ${kid.battery})</span>
+              <span class="font-mono text-zinc-300">${kid.time} (Battery:${kid.battery})</span>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    // Kid Quick Actions
     function kidBoardBusAction() {
       const select = document.getElementById('kid-bus-select');
       const busVal = select.value;
-      const statusText = `On Bus ${busVal} (Erdenet Transit Grid)`;
+      const statusText = `On Bus \${busVal} (Erdenet Transit Grid)`;
       kidsData[0].status = statusText;
       kidsData[0].time = new Date().toTimeString().split(' ')[0].substring(0,5);
       document.getElementById('kid-current-status-text').innerText = statusText;
       
       activityLog.unshift({
         time: kidsData[0].time,
-        text: `Temuulen tapped card & boarded ${busVal}`,
-        type: 'bus'
-      });
-      renderKidsDashboard();
-      renderActivityFeed();
-      showToast(`Success! Boarding signal sent for ${busVal}`);
-    }
-
-    function kidSafePingAction() {
-      kidsData[0].status = 'Arrived Safely at Stop / School';
-      kidsData[0].time = new Date().toTimeString().split(' ')[0].substring(0,5);
-      document.getElementById('kid-current-status-text').innerText = kidsData[0].status;
-      
-      activityLog.unshift({
-        time: kidsData[0].time,
-        text: `Temuulen checked in as Safe`,
-        type: 'safe'
-      });
-      renderKidsDashboard();
-      renderActivityFeed();
-      showToast(`Safe check-in sent to parents!`);
-    }
-
-    function kidSosAction() {
-      showToast(`SOS Emergency alert dispatched to Family & Erdenet Dispatch!`, 'error');
-      activityLog.unshift({
-        time: new Date().toTimeString().split(' ')[0].substring(0,5),
-        text: `SOS EMERGENCY triggered by Temuulen`,
-        type: 'error'
-      });
-      renderActivityFeed();
-    }
-
-    function simulateKidPing() {
-      showToast(`GPS Ping requested. Location updated successfully.`);
-      renderKidsDashboard();
-    }
-
-    // Planner Functions with localStorage
-    function renderPlannerTasks() {
-      const container = document.getElementById('planner-tasks-list');
-      
-      if (plannerTasks.length === 0) {
-        container.innerHTML = `
-          <div class="p-8 text-center bg-zinc-900/40 rounded-xl border border-dashed border-zinc-800">
-            <p class="text-sm text-zinc-400">No family schedule items yet.</p>
-            <p class="text-xs text-zinc-500 mt-1">Use the form above to add your first bus ride or class task!</p>
-          </div>
-        `;
-        document.getElementById('planner-progress-text').innerText = `0 / 0 Done (0%)`;
-        document.getElementById('planner-percent-badge').innerText = `0%`;
-        return;
-      }
-
-      container.innerHTML = plannerTasks.map((t, idx) => `
-        <div class="flex items-center justify-between p-3.5 rounded-xl bg-zinc-900/60 border ${t.done ? 'border-lime/30 bg-lime/5' : 'border-zinc-800'} transition">
-          <div class="flex items-center gap-3">
-            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${idx})" class="w-4 h-4 rounded border-zinc-700 text-lime focus:ring-lime bg-void cursor-pointer" />
-            <div>
-              <div class="text-sm font-semibold ${t.done ? 'line-through text-zinc-500' : 'text-white'}">${t.title}</div>
-              <div class="text-[11px] text-zinc-400 flex items-center gap-2 mt-0.5">
-                <span class="font-mono text-lime">🕒 ${t.time}</span>
-                <span>•</span>
-                <span>👤 ${t.kid}</span>
-                <span>•</span>
-                <span class="px-1.5 py-0.5 rounded bg-zinc-800 text-[10px]">${t.bus}</span>
-              </div>
-            </div>
-          </div>
-          <button onclick="deleteTask(${idx})" class="text-zinc-500 hover:text-rose-400 p-1 text-xs">✕</button>
-        </div>
-      `).join('');
-
-      const doneCount = plannerTasks.filter(t => t.done).length;
-      const total = plannerTasks.length;
-      const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
-      document.getElementById('planner-progress-text').innerText = `${doneCount} / ${total} Done (${pct}%)`;
-      document.getElementById('planner-percent-badge').innerText = `${pct}%`;
-      
-      localStorage.setItem('genesis_planner_tasks', JSON.stringify(plannerTasks));
-    }
-
-    function handleAddTask(e) {
-      e.preventDefault();
-      const title = document.getElementById('task-title-input').value;
-      const time = document.getElementById('task-time-input').value;
-      const kid = document.getElementById('task-kid-input').value;
-      const bus = document.getElementById('task-bus-input').value;
-
-      plannerTasks.push({ title, time, kid, bus, done: false });
-      document.getElementById('task-title-input').value = '';
-      renderPlannerTasks();
-      showToast('Task added to family planner!');
-    }
-
-    function toggleTask(idx) {
-      plannerTasks[idx].done = !plannerTasks[idx].done;
-      renderPlannerTasks();
-    }
-
-    function deleteTask(idx) {
-      plannerTasks.splice(idx, 1);
-      renderPlannerTasks();
-      showToast('Task removed.');
-    }
-
-    // Transit Map & Arrivals
-    function filterRoute(route) {
-      activeRouteFilter = route;
-      document.querySelectorAll('.route-pill').forEach(btn => {
-        if(btn.getAttribute('data-route') === route) {
-          btn.className = "route-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-lime text-void transition";
-        } else {
-          btn.className = "route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition";
-        }
-      });
-      renderTransitMap();
-    }
-
-    function renderTransitMap() {
-      // SVG Map Stops
-      const stopsLayer = document.getElementById('map-stops-layer');
-      const stopsCoords = [
-        { id: 'STOP-1R', x: 230, y: 300, name: '1-р хороолол', route: 'Ч:1' },
-        { id: 'STOP-5M', x: 570, y: 310, name: '5-р Микро', route: 'Ч:2' },
-        { id: 'STOP-SQ', x: 410, y: 285, name: 'Төв Талбай', route: 'Ч:3' },
-        { id: 'STOP-BYN', x: 460, y: 115, name: 'Баян-Өндөр', route: 'Ч:4' }
-      ];
-
-      stopsLayer.innerHTML = stopsCoords.map(s => `
-        <g class="cursor-pointer" onclick="selectStop('${s.id}')">
-          <circle cx="${s.x}" cy="${s.y}" r="8" fill="${selectedStopId === s.id ? '#A3E635' : '#18181D'}" stroke="#A3E635" stroke-width="3" />
-          <text x="${s.x}" y="${s.y - 14}" text-anchor="middle" fill="#E4E4E7" font-size="10" font-family="Space Grotesk" font-weight="600">${s.name}</text>
-        </g>
-      `).join('');
-
-      // SVG Active Buses
-      const busesLayer = document.getElementById('map-buses-layer');
-      const buses = [
-        { id: 'BUS-204', x: 490, y: 295, route: 'Ч:2', color: '#A3E635', kidAboard: true },
-        { id: 'BUS-101', x: 150, y: 305, route: 'Ч:1', color: '#10B981', kidAboard: false },
-        { id: 'BUS-309', x: 420, y: 200, route: 'Ч:3', color: '#8B5CF6', kidAboard: false },
-        { id: 'BUS-402', x: 300, y: 350, route: 'Ч:4', color: '#38BDF8', kidAboard: false }
-      ];
-
-      busesLayer.innerHTML = buses
-        .filter(b => activeRouteFilter === 'ALL' || b.route === activeRouteFilter)
-        .map(b => `
-          <g transform="translate(${b.x}, ${b.y})" class="cursor-pointer">
-            <rect x="-14" y="-10" width="28" height="20" rx="4" fill="${b.color}" stroke="#09090B" stroke-width="2" />
-            <text x="0" y="3" text-anchor="middle" fill="#09090B" font-size="9" font-weight="900">${b.route}</text>
-            ${b.kidAboard ? '<circle cx="0" cy="-16" r="4" fill="#60A5FA" class="animate-ping"/>' : ''}
-          </g>
-        `).join('');
-
-      // SVG Kids GPS Pins
-      const kidsLayer = document.getElementById('map-kids-layer');
-      kidsLayer.innerHTML = `
-        <g transform="translate(510, 298)">
-          <circle cx="0" cy="0" r="10" fill="#8B5CF6" opacity="0.3" class="pulse-ring" />
-          <circle cx="0" cy="0" r="5" fill="#8B5CF6" stroke="#FFFFFF" stroke-width="1.5" />
-          <text x="12" y="3" fill="#C4B5FD" font-size="10" font-weight="bold">Тэмүүлэн (Bus Ч:2)</text>
-        </g>
-      `;
-    }
-
-    function renderStopSelectors() {
-      const container = document.getElementById('stop-selector-pills');
-      container.innerHTML = stopsData.map(s => `
-        <button onclick="selectStop('${s.id}')" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
-          selectedStopId === s.id ? 'bg-lime text-void font-bold' : 'bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800'
-        }">
-          ${s.name.split(' ')[0]}
-        </button>
-      `).join('');
-    }
-
-    function selectStop(id) {
-      selectedStopId = id;
-      renderStopSelectors();
-      renderLiveArrivals();
-      renderTransitMap();
-    }
-
-    function renderLiveArrivals() {
-      const stop = stopsData.find(s => s.id === selectedStopId) || stopsData[0];
-      document.getElementById('selected-stop-name').innerHTML = `<span>${stop.name}</span>`;
-      document.getElementById('selected-stop-code').innerText = stop.code;
-
-      const container = document.getElementById('live-arrivals-list');
-      container.innerHTML = stop.arrivals.map(a => `
-        <div class="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center font-bold text-xs text-lime">
-              BUS
-            </div>
-            <div>
-              <div class="text-sm font-bold text-white flex items-center gap-2">
-                <span>${a.bus}</span>
-                ${a.kidAboard ? '<span class="px-2 py-0.5 rounded-full bg-indigo/20 text-indigo text-[10px] font-bold border border-indigo/40">Kid Aboard</span>' : ''}
-              </div>
-              <div class="text-[11px] text-zinc-400 font-mono">Plate: ${a.plate}</div>
-            </div>
-          </div>
-          <div class="text-right">
-            <div class="text-sm font-extrabold text-lime font-mono">${a.eta}</div>
-            <div class="text-[10px] text-zinc-500 uppercase">Live ETA</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderActivityFeed() {
-      const container = document.getElementById('activity-feed-list');
-      container.innerHTML = activityLog.map(item => `
-        <div class="p-3 rounded-xl bg-zinc-900/50 border border-zinc-800/80 text-xs space-y-1">
-          <div class="flex items-center justify-between text-[10px] text-zinc-400 font-mono">
-            <span class="text-lime">${item.time}</span>
-            <span class="uppercase">${item.type}</span>
-          </div>
-          <div class="text-zinc-200">${item.text}</div>
-        </div>
-      `).join('');
-    }
-
-    function clearActivityLog() {
-      activityLog = [];
-      renderActivityFeed();
-      showToast('Activity log cleared.');
-    }
-  </script>
-</body>
-</html>
+        text: `Temuulen tapped card & boarded \${bus
