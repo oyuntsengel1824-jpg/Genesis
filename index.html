@@ -1,151 +1,1462 @@
 <!DOCTYPE html>
-<html lang="mn"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Эрдэнэт Автобус</title>
-<style>
-:root{--bg:#fff8ee;--card:#fff;--ink:#2b2a33;--mut:#7a7686;--pri:#ff8a3d;--blu:#2f80ed;--grn:#27ae60;--line:#f0e4d2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a2230;--card:#372d3f;--ink:#fbf1e4;--mut:#bfb2c8;--line:#4a3d54}}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,"Segoe UI",Arial,sans-serif}
-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;display:flex;gap:6px;align-items:center;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto}
-nav b{margin-right:auto;white-space:nowrap}nav a{color:var(--ink);text-decoration:none;padding:6px 12px;border-radius:99px;white-space:nowrap;font-size:14px}nav a:hover{background:var(--pri);color:#fff}
-section{max-width:1080px;margin:0 auto;padding:28px 14px}h2{margin:0 0 14px;font-size:24px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
-.hero svg{width:100%;height:auto;display:block;border-radius:0 0 28px 28px}
-.hero h1{position:absolute;left:5%;top:8%;margin:0;font-size:clamp(24px,5vw,48px);color:#fff;text-shadow:0 2px 8px #0003}
-.hero{position:relative}
-.bus{animation:drive 16s linear infinite}.wheel{transform-box:fill-box;transform-origin:center;animation:spin 1s linear infinite}
-.cl{animation:drift 60s linear infinite}.cl2{animation-duration:90s}
-@keyframes drive{from{transform:translateX(-300px)}to{transform:translateX(1300px)}}
-@keyframes spin{to{transform:rotate(360deg)}}@keyframes drift{from{transform:translateX(-200px)}to{transform:translateX(1300px)}}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:99px;cursor:pointer;font-size:14px}.chip.on{border-color:var(--pri);background:var(--pri);color:#fff}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
-#map{width:100%;height:auto;background:#e9f3df;border-radius:18px;border:1px solid var(--line);cursor:crosshair}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-button,input,select{font:inherit;color:var(--ink)}
-.btn{background:var(--pri);color:#fff;border:0;border-radius:12px;padding:8px 14px;cursor:pointer}.btn.g{background:var(--grn)}.btn.o{background:transparent;color:var(--ink);border:1px solid var(--line)}
-input,select{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:7px 10px;max-width:100%}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
-.mut{color:var(--mut);font-size:13px}.tag{display:inline-block;background:var(--bg);border-radius:99px;padding:2px 10px;margin:2px;font-size:13px}
-.ok{color:var(--grn);font-weight:600}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:760px){.two{grid-template-columns:1fr}}
-.it input[type=text]{flex:1;min-width:120px}
-.msgs{max-height:100px;overflow:auto;font-size:13px;margin:6px 0}
-</style></head><body>
-<nav><b>🚌 Эрдэнэт Автобус</b><a href="#map-s">Газрын зураг</a><a href="#routes">Чиглэл</a><a href="#kids">Хүүхэд</a><a href="#plan">Төлөвлөгөө</a><a href="#taxi">Хамт такси</a></nav>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GENESIS // Erdenet Family Transit & Daily Sync</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            void: '#09090B',
+            surface: '#121216',
+            card: '#18181D',
+            border: '#27272A',
+            lime: '#A3E635',
+            mint: '#10B981',
+            indigo: '#8B5CF6',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #09090B;
+      color: #F4F4F5;
+      overflow-x: hidden;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #09090B; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
 
-<div class="hero">
-<svg viewBox="0 0 1200 420" aria-hidden="true">
-<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#ffe9c7"/></linearGradient></defs>
-<rect width="1200" height="420" fill="url(#sk)"/><circle cx="980" cy="120" r="50" fill="#fff3b0"/>
-<g class="cl"><ellipse cx="200" cy="90" rx="60" ry="18" fill="#fff"/><ellipse cx="240" cy="78" rx="40" ry="16" fill="#fff"/></g>
-<g class="cl cl2"><ellipse cx="500" cy="140" rx="55" ry="15" fill="#fff"/><ellipse cx="535" cy="128" rx="35" ry="14" fill="#fff"/></g>
-<path d="M0 300 Q200 200 420 280 T820 270 T1200 260 V420 H0Z" fill="#9ccc65"/>
-<path d="M0 320 Q300 250 600 310 T1200 300 V420 H0Z" fill="#7cb342"/>
-<g fill="#d9d2c5"><rect x="640" y="190" width="60" height="120"/><rect x="710" y="150" width="70" height="160"/><rect x="790" y="210" width="60" height="100"/><rect x="860" y="170" width="70" height="140"/></g>
-<g fill="#fff9"><rect x="650" y="205" width="12" height="12"/><rect x="672" y="205" width="12" height="12"/><rect x="722" y="170" width="12" height="12"/><rect x="750" y="170" width="12" height="12"/><rect x="872" y="190" width="12" height="12"/><rect x="900" y="190" width="12" height="12"/></g>
-<g><g transform="translate(90,265)"><polygon points="0,45 60,45 30,0" fill="#f5efe0"/><rect x="0" y="45" width="60" height="25" fill="#f5efe0"/><circle cx="30" cy="-2" r="4" fill="#d9534f"/><rect x="24" y="48" width="12" height="22" fill="#2f80ed"/></g>
-<g transform="translate(200,275)"><polygon points="0,38 50,38 25,0" fill="#fff"/><rect y="38" width="50" height="22" fill="#fff"/><rect x="20" y="40" width="10" height="20" fill="#ff8a3d"/></g>
-<g transform="translate(300,270)"><polygon points="0,40 55,40 28,0" fill="#f5efe0"/><rect y="40" width="55" height="24" fill="#f5efe0"/><rect x="22" y="42" width="10" height="22" fill="#27ae60"/></g>
-<path d="M60 340V300h320v40" fill="none" stroke="#8d6e63" stroke-width="3" stroke-dasharray="4 4"/></g>
-<rect y="345" width="1200" height="60" fill="#5d5a66"/><path d="M0 375H1200" stroke="#fff" stroke-width="4" stroke-dasharray="30 24"/>
-<g class="bus"><g transform="translate(0,305)"><rect width="180" height="62" rx="12" fill="#2f80ed"/><rect x="10" y="10" width="26" height="22" rx="4" fill="#cfe7ff"/><rect x="42" y="10" width="26" height="22" rx="4" fill="#cfe7ff"/><rect x="74" y="10" width="26" height="22" rx="4" fill="#cfe7ff"/><rect x="106" y="10" width="26" height="22" rx="4" fill="#cfe7ff"/><rect x="140" y="10" width="30" height="36" rx="4" fill="#cfe7ff"/><rect y="40" width="180" height="6" fill="#ff8a3d"/>
-<circle class="wheel" cx="40" cy="64" r="12" fill="#333"/><circle class="wheel" cx="140" cy="64" r="12" fill="#333"/><circle cx="40" cy="64" r="4" fill="#ccc"/><circle cx="140" cy="64" r="4" fill="#ccc"/></g></g>
-</svg><h1>Эрдэнэт · Хотын амьдрал</h1></div>
+    /* Neo-brutalist subtle glow & grid */
+    .bg-grid-pattern {
+      background-image: linear-gradient(to right, rgba(39, 39, 42, 0.35) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(39, 39, 42, 0.35) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .glass-panel {
+      background: rgba(18, 18, 22, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid #27272A;
+    }
+    .pulse-ring {
+      animation: pulseRing 2.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.8); opacity: 0.9; }
+      80%, 100% { transform: scale(2.4); opacity: 0; }
+    }
+    .brutal-shadow {
+      box-shadow: 4px 4px 0px #27272A;
+    }
+    .brutal-shadow-lime {
+      box-shadow: 4px 4px 0px rgba(163, 230, 53, 0.35);
+    }
+  </style>
+</head>
+<body class="bg-void text-zinc-100 antialiased selection:bg-lime selection:text-void">
 
-<section id="map-s"><h2>Автобус хаана явна?</h2>
-<div class="chips" id="rchips"></div>
-<svg id="map" viewBox="0 0 800 460"></svg>
-<div class="row"><button class="btn" id="loc">📍 Миний байршил</button><span class="mut" id="nearest">Газрын зураг дээр дарж байршлаа заана уу</span></div></section>
+  <!-- Toast Notification Container (Replaces alert) -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
-<section id="routes"><h2>Чиглэлүүд</h2><div class="grid" id="rgrid"></div></section>
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-zinc-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-lime text-void flex items-center justify-center font-display font-extrabold text-xl tracking-tighter brutal-shadow">
+          G
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-bold text-lg tracking-tight text-white">GENESIS</span>
+            <span class="hidden sm:inline-block text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-zinc-800 text-lime border border-lime/30">ERDENET LIVE</span>
+          </div>
+          <p class="text-[11px] text-zinc-400 hidden md:block" data-i18n="tagline">Family Transit & Daily Sync</p>
+        </div>
+      </div>
 
-<section id="kids"><h2>Хүүхэд хаана явна?</h2>
-<div class="card"><div class="row"><input id="kname" placeholder="Хүүхдийн нэр"><select id="kbus"></select><button class="btn g" id="kadd">+ Автобусанд суулаа</button></div>
-<div id="klist"></div></div></section>
+      <!-- Role Switcher (Parent vs Kid Mode) -->
+      <div class="flex items-center bg-zinc-900 p-1 rounded-full border border-zinc-800">
+        <button id="btn-role-parent" onclick="setRole('parent')" class="px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-lime text-void shadow-sm flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span data-i18n="parentView">Parent View</span>
+        </button>
+        <button id="btn-role-kid" onclick="setRole('kid')" class="px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all text-zinc-400 hover:text-white flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span data-i18n="kidView">Kid Mode</span>
+        </button>
+      </div>
 
-<section id="plan"><h2>Долоо хоногийн төлөвлөгөө</h2>
-<div class="chips" id="days"></div>
-<div class="card"><div id="items"></div><div class="row"><input type="time" id="pt" value="08:00"><input id="px" placeholder="Юу хийх вэ?"><button class="btn" id="padd">+ Нэмэх</button></div>
-<div class="mut">Өнгөрсөн өдрийг ч засах, устгах боломжтой.</div></div></section>
+      <!-- Language & Clock -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden lg:flex items-center gap-1.5 text-xs font-mono text-zinc-400 bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-800">
+          <span class="w-2 h-2 rounded-full bg-mint animate-pulse"></span>
+          <span id="live-clock">16:40:00</span>
+          <span class="text-zinc-600">|</span>
+          <span>-14°C Эрдэнэт</span>
+        </div>
+        <button id="lang-toggle" onclick="toggleLang()" class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-bold tracking-wider text-zinc-200 transition">
+          EN / МОН
+        </button>
+      </div>
+    </div>
+  </header>
 
-<section id="taxi"><h2>Сурагчдын хамт такси</h2>
-<div class="two"><div class="card"><b>Шинэ бүлэг</b>
-<div class="row"><input id="tf" placeholder="Хаанаас"><input id="tt" placeholder="Хаашаа"></div>
-<div class="row"><input type="time" id="ttm" value="07:45"><select id="tc"><option>2</option><option>3</option><option selected>4</option></select><span class="mut">хүүхэд</span></div>
-<div class="row"><input id="tme" placeholder="Миний хүүхдийн нэр"><button class="btn" id="tadd">Үүсгэх</button></div>
-<div class="mut">2–4 хүүхэд цугларвал такси баталгаажна.</div></div>
-<div id="tlist"></div></div></section>
+  <!-- HERO SECTION WITH ANIMATED ERDENET CITY + GER + BUS CANVAS -->
+  <section class="relative border-b border-zinc-800 overflow-hidden">
+    <!-- Interactive Canvas Background -->
+    <div class="relative w-full h-[360px] sm:h-[420px] bg-gradient-to-b from-[#0c1220] via-[#131826] to-[#09090B]">
+      <canvas id="heroCanvas" class="w-full h-full block"></canvas>
+      <!-- Subtle Gradient Vignette for crisp text legibility -->
+      <div class="absolute inset-0 bg-gradient-to-r from-void/95 via-void/70 to-transparent pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-void/30 pointer-events-none"></div>
 
-<script>
-const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
-const R=[
-{id:'Ч:1-Ч:2',n:'Их залуу – Шанд',c:'#8bc34a',i:'10-15',m:25,p:[[60,90],[170,170],[260,230],[390,250],[520,300]]},
-{id:'Ч:3',n:'Баян тал',c:'#26c6da',i:'15',m:20,p:[[120,400],[210,330],[300,290],[420,250],[560,200]]},
-{id:'Ч:4',n:'Сагсай',c:'#9c27b0',i:'15-20',m:30,p:[[240,60],[300,130],[330,200],[430,240],[610,230]]},
-{id:'Ч:5',n:'Говил',c:'#ff4fd8',i:'12-15',m:35,p:[[700,60],[640,120],[560,170],[470,230],[360,330]]},
-{id:'Ч:6',n:'Тосгон – Пирамид – Зээл',c:'#ffb300',i:'10',m:20,p:[[740,140],[650,200],[560,230],[440,260],[320,300]]},
-{id:'Ч:7',n:'Вокзал – Төгөл',c:'#f2d600',i:'15',m:25,p:[[380,420],[420,340],[470,270],[540,210],[600,120]]},
-{id:'Ч:8',n:'Урд хабитат – Дэнж – Даниста',c:'#a1887f',i:'12',m:35,p:[[100,300],[200,280],[330,265],[470,260],[650,280]]},
-{id:'Ч:9',n:'Яргуйт – Автовокзал',c:'#e53935',i:'15',m:30,p:[[760,100],[690,180],[570,240],[450,320],[300,380]]}];
-const NS=document.createElementNS.bind(document,'http://www.w3.org/2000/svg');
-const map=$('#map');let filter=null,me=null,watch={};
-// background: ger district + city blocks
-map.innerHTML='<rect width="800" height="460" fill="#e9f3df"/><path d="M0 330Q200 300 330 380T800 360V460H0Z" fill="#dcead0"/><rect x="420" y="190" width="200" height="90" rx="14" fill="#f3e3c8" opacity=".7"/><text x="450" y="240" font-size="13" fill="#8a7a5a">ТӨВ</text><text x="90" y="250" font-size="12" fill="#8a7a5a">🏠 Гэр хороолол</text>';
-const paths=[],stops=[];
-R.forEach((r,ri)=>{const p=NS('path');p.setAttribute('d','M'+r.p.map(q=>q.join(',')).join(' L'));p.setAttribute('fill','none');p.setAttribute('stroke',r.c);p.setAttribute('stroke-width',5);p.setAttribute('stroke-linecap','round');p.setAttribute('opacity',.85);map.appendChild(p);r.el=p;r.len=p.getTotalLength();
-r.p.forEach((q,k)=>{const c=NS('circle');c.setAttribute('cx',q[0]);c.setAttribute('cy',q[1]);c.setAttribute('r',k==0||k==4?6:3.5);c.setAttribute('fill','#fff');c.setAttribute('stroke',r.c);c.setAttribute('stroke-width',2);r['s'+k]=c;map.appendChild(c)})});
-const B=[];let seq=0;
-R.forEach((r,ri)=>{for(let k=0;k<2;k++){const g=NS('g');g.style.cursor='pointer';g.innerHTML='<circle r="13" fill="'+r.c+'" stroke="#fff" stroke-width="3"/><text y="5" font-size="14" text-anchor="middle">🚌</text><text class="lb" y="-18" font-size="11" text-anchor="middle" font-weight="700" fill="#333"></text>';map.appendChild(g);
-const b={id:seq++,r,t:(k*.5+ri*.13)%1,d:1,sp:.018+Math.random()*.01,g,plate:(4000+Math.floor(Math.random()*5999))+' ОРО'};g.onclick=()=>{$('#kbus').value=b.id;document.getElementById('kids').scrollIntoView()};B.push(b)}});
-const kmark=NS('g');map.appendChild(kmark);
-const pin=NS('g');pin.innerHTML='<circle r="14" fill="#2f80ed" opacity=".25"><animate attributeName="r" values="8;22;8" dur="2s" repeatCount="indefinite"/></circle><circle r="7" fill="#2f80ed" stroke="#fff" stroke-width="3"/>';pin.style.display='none';map.appendChild(pin);
-function pos(b){const l=b.r.len*b.t;return b.r.el.getPointAtLength(l)}
-function eta(b){const rem=b.d>0?1-b.t:b.t;return Math.max(1,Math.round(rem*b.r.m))}
-let last=performance.now();
-function tick(now){const dt=Math.min(.1,(now-last)/1000);last=now;
-B.forEach(b=>{b.t+=b.d*b.sp*dt;if(b.t>=1){b.t=1;b.d=-1}if(b.t<=0){b.t=0;b.d=1}
-const p=pos(b);b.g.setAttribute('transform','translate('+p.x+','+p.y+')');b.x=p.x;b.y=p.y;
-const vis=!filter||filter===b.r.id;b.g.style.display=vis?'':'none';b.g.querySelector('.lb').textContent=kids.some(k=>k.bus==b.id)?kids.filter(k=>k.bus==b.id).map(k=>k.name).join(', '):''});
-R.forEach(r=>{const v=!filter||filter===r.id;r.el.style.display=v?'':'none';for(let k=0;k<5;k++)r['s'+k].style.display=v?'':'none'});
-requestAnimationFrame(tick)}
-// chips
-const rc=$('#rchips');function chips(){rc.innerHTML='<button class="chip '+(filter?'':'on')+'" data-f="">Бүгд</button>'+R.map(r=>'<button class="chip '+(filter===r.id?'on':'')+'" data-f="'+r.id+'"><span class="dot" style="background:'+r.c+'"></span>'+r.id+'</button>').join('')}
-rc.onclick=e=>{const f=e.target.closest('[data-f]');if(!f)return;filter=f.dataset.f||null;chips()};chips();
-$('#rgrid').innerHTML=R.map(r=>'<div class="card" style="border-top:5px solid '+r.c+'"><b>'+r.id+'</b> '+esc(r.n)+'<div class="mut">Дундаж: '+r.m+' мин · Зай: '+r.i+' мин</div><button class="btn o" style="margin-top:8px" data-g="'+r.id+'">Газрын зураг дээр</button></div>').join('');
-$('#rgrid').onclick=e=>{const g=e.target.dataset.g;if(g){filter=g;chips();document.getElementById('map-s').scrollIntoView()}};
-// my location
-function setMe(x,y){me={x,y};pin.setAttribute('transform','translate('+x+','+y+')');pin.style.display='';let best=null,bd=1e9;B.forEach(b=>{const d=Math.hypot(b.x-x,b.y-y);if(d<bd){bd=d;best=b}});if(best)$('#nearest').textContent='Хамгийн ойр: '+best.r.id+' · '+best.plate+' · ~'+Math.max(1,Math.round(bd/40))+' мин'}
-map.addEventListener('click',e=>{const pt=map.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(map.getScreenCTM().inverse());setMe(q.x,q.y)});
-$('#loc').onclick=()=>{if(navigator.geolocation)navigator.geolocation.getCurrentPosition(()=>setMe(400+Math.random()*60,250+Math.random()*40),()=>setMe(430,260),{timeout:4000});else setMe(430,260)};
-// kids
-let kids=load('kids',[]);const kb=$('#kbus');kb.innerHTML=B.map(b=>'<option value="'+b.id+'">'+b.r.id+' · '+b.plate+'</option>').join('');
-function rk(){$('#klist').innerHTML=kids.map((k,i)=>{const b=B[k.bus];return '<div class="row it"><span class="tag">👦 '+esc(k.name)+'</span><span><span class="dot" style="background:'+b.r.c+'"></span>'+b.r.id+' '+b.plate+'</span><span class="ok" data-e="'+i+'"></span><button class="btn o" data-m="'+k.bus+'">Харах</button><button class="btn o" data-x="'+i+'">Буулгах</button></div>'}).join('')||'<div class="mut">Хүүхэд автобусанд суусны дараа энд харагдана</div>';save('kids',kids)}
-$('#kadd').onclick=()=>{const n=$('#kname').value.trim();if(!n)return;kids.push({name:n,bus:+kb.value});$('#kname').value='';rk()};
-$('#klist').onclick=e=>{const t=e.target;if(t.dataset.x!==undefined){kids.splice(+t.dataset.x,1);rk()}if(t.dataset.m!==undefined){const b=B[+t.dataset.m];filter=b.r.id;chips();document.getElementById('map-s').scrollIntoView()}};
-setInterval(()=>document.querySelectorAll('[data-e]').forEach(s=>{const k=kids[+s.dataset.e];if(k)s.textContent='Очих хүртэл ~'+eta(B[k.bus])+' мин'}),1000);rk();
-// planner
-const DN=['Да','Мя','Лх','Пү','Ба','Бя','Ня'],now0=new Date(),mon=new Date(now0);mon.setDate(now0.getDate()-((now0.getDay()+6)%7));
-const days=[...Array(7)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return {k:d.toISOString().slice(0,10),l:DN[i]+' '+d.getDate()}});
-let cur=days[(now0.getDay()+6)%7].k,plan=load('plan',{});
-function rp(){$('#days').innerHTML=days.map(d=>'<button class="chip '+(d.k===cur?'on':'')+'" data-d="'+d.k+'">'+d.l+'</button>').join('');
-const L=(plan[cur]||[]).sort((a,b)=>a.t.localeCompare(b.t));
-$('#items').innerHTML=L.map(x=>'<div class="row it"><input type="checkbox" '+(x.d?'checked':'')+' data-c="'+x.id+'"><input type="time" value="'+x.t+'" data-t="'+x.id+'"><input type="text" value="'+esc(x.x)+'" data-x="'+x.id+'"><button class="btn o" data-r="'+x.id+'">✕</button></div>').join('')||'<div class="mut">Энэ өдөр хоосон</div>';save('plan',plan)}
-$('#days').onclick=e=>{if(e.target.dataset.d){cur=e.target.dataset.d;rp()}};
-const find=id=>(plan[cur]||[]).find(x=>x.id==id);
-$('#items').onchange=e=>{const t=e.target,d=t.dataset,x=find(d.c||d.t||d.x);if(!x)return;if(d.c)x.d=t.checked;if(d.t)x.t=t.value;if(d.x)x.x=t.value;rp()};
-$('#items').onclick=e=>{const id=e.target.dataset.r;if(id){plan[cur]=plan[cur].filter(x=>x.id!=id);rp()}};
-$('#padd').onclick=()=>{const v=$('#px').value.trim();if(!v)return;(plan[cur]=plan[cur]||[]).push({id:Date.now(),t:$('#pt').value||'08:00',x:v,d:false});$('#px').value='';rp()};rp();
-// taxi pool
-let tg=load('taxi',[{id:1,f:'Хабитат',t:'1-р сургууль',tm:'07:45',cap:4,m:['Бат','Сараа'],c:[]},{id:2,f:'Баян тал',t:'5-р сургууль',tm:'07:30',cap:3,m:['Тэмүүлэн'],c:[]}]);
-function rt(){$('#tlist').innerHTML=tg.map(g=>{const ok=g.m.length>=2,full=g.m.length>=g.cap;return '<div class="card" style="margin-bottom:10px"><b>'+esc(g.f)+' → '+esc(g.t)+'</b> <span class="mut">'+esc(g.tm)+'</span><div>'+g.m.map(m=>'<span class="tag">👦 '+esc(m)+'</span>').join('')+'<span class="mut"> '+g.m.length+'/'+g.cap+'</span></div><div class="'+(ok?'ok':'mut')+'">'+(ok?'🚕 Такси баталгаажсан':'Дор хаяж 2 хүүхэд хэрэгтэй')+'</div><div class="row"><button class="btn g" data-j="'+g.id+'" '+(full?'disabled':'')+'>Нэгдэх</button><button class="btn o" data-l="'+g.id+'">Гарах</button></div><div class="msgs">'+g.c.map(c=>'<div><b>'+esc(c.n)+':</b> '+esc(c.x)+'</div>').join('')+'</div><div class="row"><input data-i="'+g.id+'" placeholder="Эцэг эхтэй холбогдох..."><button class="btn o" data-s="'+g.id+'">Илгээх</button></div></div>'}).join('');save('taxi',tg)}
-const myN=()=>$('#tme').value.trim();
-$('#tadd').onclick=()=>{const n=myN(),f=$('#tf').value.trim(),t=$('#tt').value.trim();if(!n||!f||!t)return;tg.push({id:Date.now(),f,t,tm:$('#ttm').value,cap:+$('#tc').value,m:[n],c:[]});rt()};
-$('#tlist').onclick=e=>{const d=e.target.dataset,g=tg.find(x=>x.id==(d.j||d.l||d.s));if(!g)return;
-if(d.j){const n=myN();if(!n){alert('Хүүхдийн нэрээ бичнэ үү');return}if(g.m.length<g.cap&&!g.m.includes(n))g.m.push(n)}
-if(d.l){g.m=g.m.filter(m=>m!==myN())}
-if(d.s){const i=document.querySelector('[data-i="'+g.id+'"]'),v=i.value.trim();if(!v)return;g.c.push({n:myN()||'Эцэг эх',x:v})}rt()};rt();
-requestAnimationFrame(tick);
-</script></body></html>
+      <!-- Hero Content Overlay -->
+      <div class="absolute inset-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+        <div class="max-w-2xl space-y-4">
+          <!-- Status Pill -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/90 border border-lime/40 text-xs font-medium text-lime backdrop-blur-md">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-lime"></span>
+            </span>
+            <span id="hero-status-pill" data-i18n="heroPill">2 Kids Active • Live Erdenet Transit Synced</span>
+          </div>
+
+          <h1 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+            <span data-i18n="heroTitle1">Smart Family Sync &</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-lime via-mint to-indigo" data-i18n="heroTitle2">Erdenet Live Transit</span>
+          </h1>
+
+          <p class="text-sm sm:text-base text-zinc-300 max-w-xl leading-relaxed" data-i18n="heroDesc">
+            From traditional Ger districts on Bayan-Öndör hills to central avenues—track which exact bus your kids board, view live arrival times, and coordinate daily family schedules in real time.
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <a href="#transit-section" class="px-5 py-2.5 rounded-xl bg-lime hover:bg-lime/90 text-void font-bold text-sm transition transform active:scale-95 brutal-shadow flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span data-i18n="btnLiveMap">Live Bus Map</span>
+            </a>
+            <a href="#planner-section" class="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-700 font-semibold text-sm transition flex items-center gap-2">
+              <svg class="w-4 h-4 text-indigo" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+              <span data-i18n="btnPlanner">Daily Family Planner</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Legend Badge -->
+      <div class="hidden md:flex items-center gap-3 absolute bottom-4 right-6 px-3.5 py-1.5 rounded-full bg-void/80 border border-zinc-800 text-[11px] text-zinc-400 backdrop-blur-md">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-lime"></span> Ч:2 Silver Bus</span>
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-mint"></span> Ч:1 Green Bus</span>
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-300"></span> Баян-Өндөр Ger Hills</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 bg-grid-pattern">
+
+    <!-- ROLE-SPECIFIC TOP MODULE: PARENT TRACKER OR KID CHECK-IN CONSOLE -->
+    <section id="role-console">
+      <!-- PARENT VIEW PANEL -->
+      <div id="parent-dashboard-panel" class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-wider text-lime" data-i18n="parentRadarTag">FAMILY TELEMETRY // ACTIVE</span>
+            <h2 class="font-display text-2xl font-bold text-white" data-i18n="kidsLiveTitle">Children Live Status & Bus Boarding</h2>
+          </div>
+          <button onclick="simulateKidPing()" class="self-start sm:self-auto px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-200 flex items-center gap-2 transition">
+            <svg class="w-4 h-4 text-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span data-i18n="requestLocation">Ping GPS Check-in</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5" id="kids-cards-container">
+          <!-- Kid Cards injected dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- KID MODE PANEL (Hidden by default) -->
+      <div id="kid-dashboard-panel" class="hidden space-y-5">
+        <div class="rounded-2xl bg-surface border border-indigo/50 p-6 brutal-shadow">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo/20 text-indigo text-xs font-bold">
+                <span>STUDENT SMART CARD // NFC READY</span>
+              </div>
+              <h2 class="font-display text-2xl sm:text-3xl font-bold text-white" data-i18n="kidWelcome">Сайн уу, Тэмүүлэн! (Hi, Temuulen!)</h2>
+              <p class="text-sm text-zinc-400" data-i18n="kidSub">Tap when you board a bus or arrive at school so Mom & Dad know you're safe.</p>
+            </div>
+
+            <!-- Kid Quick Actions -->
+            <div class="flex flex-wrap gap-3">
+              <button onclick="kidBoardBusAction()" class="px-5 py-3.5 rounded-2xl bg-lime hover:bg-lime/90 text-void font-extrabold text-sm flex items-center gap-2.5 transition transform active:scale-95 brutal-shadow">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span data-i18n="btnTapBus">Tap Bus Card (Boarded)</span>
+              </button>
+              <button onclick="kidSafePingAction()" class="px-5 py-3.5 rounded-2xl bg-mint hover:bg-mint/90 text-void font-extrabold text-sm flex items-center gap-2.5 transition transform active:scale-95">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span data-i18n="btnImSafe">I'm Safe at Stop</span>
+              </button>
+              <button onclick="kidSosAction()" class="px-4 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm flex items-center gap-2 transition">
+                <span>SOS</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Select which bus the kid is boarding -->
+          <div class="mt-6 pt-5 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <label for="kid-bus-select" class="text-xs font-semibold uppercase tracking-wider text-zinc-400" data-i18n="selectBusLabel">Select Current Bus:</label>
+              <select id="kid-bus-select" class="bg-zinc-900 border border-zinc-700 text-white text-sm rounded-xl px-3.5 py-2 focus:outline-none focus:border-lime">
+                <option value="BUS-204">Ч:2 • Эрдэнэт Үйлдвэр - 5-р Микро (04-82 ОРХ)</option>
+                <option value="BUS-101">Ч:1 • Найрамдал - 1-р Хороолол (11-45 ОРХ)</option>
+                <option value="BUS-309">Ч:3 • Баян-Өндөр - Төв Талбай (88-19 ОРХ)</option>
+                <option value="BUS-402">Ч:4 • Хүрэнбулаг - 3-р Хороолол (52-10 ОРХ)</option>
+              </select>
+            </div>
+            <div class="text-xs text-zinc-400 font-mono">
+              Current Status: <span id="kid-current-status-text" class="text-lime font-bold">On Bus Ч:2 (Heading to 5-р Микро)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ERDENET LIVE TRANSIT MAP & ARRIVAL TIMES (dedtuv.erdenet.mn/transit style) -->
+    <section id="transit-section" class="space-y-4">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-mint/15 text-mint border border-mint/30 text-[11px] font-mono font-bold">DEDTUV.ERDENET.MN // LIVE FEED</span>
+          </div>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mt-1" data-i18n="transitTitle">Erdenet City Live Bus Map & Arrivals</h2>
+        </div>
+
+        <!-- Route Filter Pills -->
+        <div class="flex flex-wrap gap-2" id="route-filters">
+          <button onclick="filterRoute('ALL')" data-route="ALL" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-lime text-void transition">
+            Бүгд / All (4)
+          </button>
+          <button onclick="filterRoute('Ч:1')" data-route="Ч:1" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:1 Найрамдал - 1-р хор
+          </button>
+          <button onclick="filterRoute('Ч:2')" data-route="Ч:2" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:2 Үйлдвэр - 5-р микро
+          </button>
+          <button onclick="filterRoute('Ч:3')" data-route="Ч:3" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:3 Баян-Өндөр - Төв
+          </button>
+          <button onclick="filterRoute('Ч:4')" data-route="Ч:4" class="route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition">
+            Ч:4 Хүрэнбулаг - 3-р хор
+          </button>
+        </div>
+      </div>
+
+      <!-- Map + Live Arrivals Split Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Interactive SVG City Map (7 cols) -->
+        <div class="lg:col-span-7 rounded-2xl bg-surface border border-zinc-800 overflow-hidden flex flex-col">
+          <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/60">
+            <div class="flex items-center gap-2 text-xs font-semibold text-zinc-300">
+              <span class="w-2 h-2 rounded-full bg-lime animate-ping"></span>
+              <span>GPS Telemetry: Orkhon / Erdenet Grid</span>
+            </div>
+            <span class="text-[11px] font-mono text-zinc-400" data-i18n="mapHint">Click any stop or bus for live ETA</span>
+          </div>
+
+          <div class="relative w-full aspect-[16/11] bg-[#0B0E14] select-none overflow-hidden">
+            <svg id="erdenet-map-svg" viewBox="0 0 800 550" class="w-full h-full">
+              <defs>
+                <pattern id="mapGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#181D27" stroke-width="1"/>
+                </pattern>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              <!-- Base Grid -->
+              <rect width="800" height="550" fill="url(#mapGrid)" />
+
+              <!-- Topographic Hills & Ger District Zone (Bayan-Öndör North) -->
+              <path d="M0,0 L800,0 L800,150 Q620,190 430,130 T0,165 Z" fill="#131926" opacity="0.85" />
+              <text x="580" y="55" fill="#52525B" font-size="11" font-family="Space Grotesk" font-weight="700" letter-spacing="1.5">БАЯН-ӨНДӨР / GER DISTRICT</text>
+              <!-- Decorative Ger icons on map hills -->
+              <g transform="translate(550, 75)" opacity="0.55">
+                <path d="M0,12 L12,4 L24,12 L24,20 L0,20 Z" fill="#D97706" />
+                <path d="M35,18 L47,10 L59,18 L59,26 L35,26 Z" fill="#D97706" />
+                <path d="M75,8 L87,0 L99,8 L99,16 L75,16 Z" fill="#D97706" />
+              </g>
+
+              <!-- Erdenet Mining Corp Industrial Zone (South-East) -->
+              <path d="M560,390 L800,360 L800,550 L520,550 Z" fill="#16161E" stroke="#27272A" stroke-dasharray="4 4" />
+              <text x="615" y="485" fill="#71717A" font-size="11" font-family="Space Grotesk" font-weight="700">ЭРДЭНЭТ ҮЙЛДВЭР (EMC)</text>
+
+              <!-- Main Avenue Roads -->
+              <!-- Central East-West Avenue (Nairamdal -> Central -> 1-r -> EMC) -->
+              <path id="road-main" d="M 70,310 L 230,300 L 410,285 L 570,310 L 710,415" fill="none" stroke="#27272A" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M 70,310 L 230,300 L 410,285 L 570,310 L 710,415" fill="none" stroke="#3F3F46" stroke-width="2" stroke-dasharray="8 8" />
+
+              <!-- North-South Road (Bayan-Öndör Ger Hills -> Central Square -> 4-r / 5-r Micro) -->
+              <path id="road-ns" d="M 460,115 L 430,205 L 410,285 L 365,400 L 240,465" fill="none" stroke="#27272A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M 460,115 L 430,205 L 410,285 L 365,400 L 240,465" fill="none" stroke="#3F3F46" stroke-width="2" stroke-dasharray="6 6" />
+
+              <!-- Secondary Loop (Khurenbulag -> 3-r khoroolol -> 1-r khoroolol) -->
+              <path id="road-loop" d="M 150,185 L 230,300 L 365,400 L 570,310" fill="none" stroke="#222228" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+
+              <!-- Active Route Highlight Paths -->
+              <path id="route-path-Ч:1" d="M 70,310 L 230,300 L 410,285 L 570,310" fill="none" stroke="#10B981" stroke-width="4" opacity="0.65" />
+              <path id="route-path-Ч:2" d="M 710,415 L 570,310 L 410,285 L 365,400 L 240,465" fill="none" stroke="#A3E635" stroke-width="4" opacity="0.75" />
+              <path id="route-path-Ч:3" d="M 460,115 L 430,205 L 410,285" fill="none" stroke="#8B5CF6" stroke-width="4" opacity="0.7" />
+              <path id="route-path-Ч:4" d="M 150,185 L 230,300 L 365,400" fill="none" stroke="#38BDF8" stroke-width="4" opacity="0.65" />
+
+              <!-- Bus Stops Group (Populated via JS) -->
+              <g id="map-stops-layer"></g>
+
+              <!-- Moving Buses Group (Populated & Animated via JS) -->
+              <g id="map-buses-layer"></g>
+
+              <!-- Kids Live GPS Pins Group (Populated via JS) -->
+              <g id="map-kids-layer"></g>
+            </svg>
+
+            <!-- Map Bottom Overlay Legend -->
+            <div class="absolute bottom-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-void/90 border border-zinc-800 px-3 py-2 rounded-xl text-[11px] backdrop-blur-md">
+              <div class="flex items-center gap-3">
+                <span class="flex items-center gap-1.5 text-zinc-300"><span class="w-2.5 h-2.5 rounded-full bg-white border-2 border-zinc-900"></span> Bus Stop</span>
+                <span class="flex items-center gap-1.5 text-lime font-semibold"><span class="w-2.5 h-2.5 rounded-sm bg-lime"></span> Active Bus</span>
+                <span class="flex items-center gap-1.5 text-indigo font-semibold"><span class="w-2.5 h-2.5 rounded-full bg-indigo animate-pulse"></span> Kid GPS Pin</span>
+              </div>
+              <span class="font-mono text-zinc-400">Auto-refresh: 3s</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Arrival Times Panel (5 cols - dedtuv.erdenet.mn style) -->
+        <div class="lg:col-span-5 rounded-2xl bg-surface border border-zinc-800 flex flex-col justify-between">
+          <div>
+            <!-- Selected Stop Header -->
+            <div class="p-4 border-b border-zinc-800 bg-zinc-900/60 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400" data-i18n="selectedStopLabel">SELECTED BUS STOP</span>
+                <h3 id="selected-stop-name" class="font-display text-lg font-bold text-white flex items-center gap-2">
+                  <span>1-р хороолол (1st Microdistrict)</span>
+                </h3>
+              </div>
+              <span id="selected-stop-code" class="px-2.5 py-1 rounded-lg bg-zinc-800 border border-zinc-700 font-mono text-xs text-lime font-bold">
+                STOP #04
+              </span>
+            </div>
+
+            <!-- Quick Stop Selector Pills -->
+            <div class="px-4 py-2.5 border-b border-zinc-800/80 flex items-center gap-1.5 overflow-x-auto" id="stop-selector-pills">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Live Arriving Buses List -->
+            <div class="p-4 space-y-3" id="live-arrivals-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Transit Telemetry Footer Note -->
+          <div class="p-4 border-t border-zinc-800 bg-zinc-900/40 rounded-b-2xl">
+            <div class="flex items-center justify-between text-xs text-zinc-400">
+              <span data-i18n="childAboardHighlight">Highlighted badge shows which bus your child is aboard</span>
+              <span class="font-mono text-mint">● GPS ONLINE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAILY FAMILY PLANNER & LIVE ACTIVITY FEED -->
+    <section id="planner-section" class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
+      
+      <!-- Daily Family Schedule & Task Planner (8 cols) -->
+      <div class="lg:col-span-8 rounded-2xl bg-surface border border-zinc-800 p-5 sm:p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-wider text-indigo">FAMILY DAILY SYNC // SCHEDULE</span>
+            <h2 class="font-display text-2xl font-bold text-white" data-i18n="plannerTitle">Today's Routine & Transit Plan</h2>
+          </div>
+
+          <!-- Progress Pill -->
+          <div class="flex items-center gap-3 bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-800">
+            <div class="text-right">
+              <div class="text-[11px] text-zinc-400" data-i18n="completionLabel">Daily Completion</div>
+              <div id="planner-progress-text" class="text-sm font-bold text-lime font-mono">3 / 5 Done (60%)</div>
+            </div>
+            <div class="w-12 h-12 rounded-full border-4 border-zinc-800 flex items-center justify-center relative">
+              <span id="planner-percent-badge" class="text-xs font-extrabold text-white">60%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add New Task / Reminder Form -->
+        <form id="add-task-form" onsubmit="handleAddTask(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-zinc-900/80 p-3 rounded-xl border border-zinc-800">
+          <input type="text" id="task-title-input" required placeholder="Add task (e.g. Board Bus Ч:2 to Coding Class)..." class="sm:col-span-5 bg-void border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-lime" />
+          <input type="time" id="task-time-input" value="17:30" required class="sm:col-span-2 bg-void border border-zinc-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime" />
+          <select id="task-kid-input" class="sm:col-span-2 bg-void border border-zinc-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime">
+            <option value="Тэмүүлэн">Тэмүүлэн</option>
+            <option value="Анужин">Анужин</option>
+          </select>
+          <select id="task-bus-input" class="sm:col-span-2 bg-void border border-zinc-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime">
+            <option value="Ч:2">Bus Ч:2</option>
+            <option value="Ч:1">Bus Ч:1</option>
+            <option value="Ч:3">Bus Ч:3</option>
+            <option value="Walk">Walk / Home</option>
+          </select>
+          <button type="submit" class="sm:col-span-1 bg-lime hover:bg-lime/90 text-void font-extrabold rounded-lg py-2 px-3 text-sm flex items-center justify-center transition">
+            +
+          </button>
+        </form>
+
+        <!-- Timeline Task List -->
+        <div id="planner-tasks-list" class="space-y-3">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- Live Family & Transit Activity Feed (4 cols) -->
+      <div class="lg:col-span-4 rounded-2xl bg-surface border border-zinc-800 p-5 sm:p-6 flex flex-col justify-between space-y-4">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-mint">REAL-TIME STREAM</span>
+              <h3 class="font-display text-lg font-bold text-white" data-i18n="activityTitle">Live Alerts & Check-ins</h3>
+            </div>
+            <span class="w-2.5 h-2.5 rounded-full bg-mint animate-ping"></span>
+          </div>
+
+          <div id="activity-feed-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-zinc-800 text-[11px] text-zinc-500 flex items-center justify-between">
+          <span>Orkhon Smart Transit API v2.4</span>
+          <button onclick="clearActivityLog()" class="text-zinc-400 hover:text-white underline">Clear</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Minimal Sleek Footer -->
+  <footer class="border-t border-zinc-800 mt-12 py-6 bg-void">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+      <div class="flex items-center gap-2">
+        <span class="w-5 h-5 rounded bg-lime text-void font-display font-extrabold flex items-center justify-center text-[11px]">G</span>
+        <span class="font-semibold text-zinc-300">GENESIS // Erdenet Family Transit & Planner</span>
+      </div>
+      <div>
+        <span>Inspired by Codely.mn & Dedtuv Erdenet Transit • Built for Orkhon Families</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    // ==========================================
+    // 1. STATE & DATA MODELS (ERDENET CONTEXT)
+    // ==========================================
+    let currentLang = 'en';
+    let currentRole = 'parent'; // 'parent' | 'kid'
+    let activeRouteFilter = 'ALL';
+    let selectedStopId = 'STOP-1R';
+
+    const i18n = {
+      en: {
+        tagline: "Family Transit & Daily Sync",
+        parentView: "Parent View",
+        kidView: "Kid Mode",
+        heroPill: "2 Kids Active • Live Erdenet Transit Synced",
+        heroTitle1: "Smart Family Sync &",
+        heroTitle2: "Erdenet Live Transit",
+        heroDesc: "From traditional Ger districts on Bayan-Öndör hills to central avenues—track which exact bus your kids board, view live arrival times, and coordinate daily family schedules in real time.",
+        btnLiveMap: "Live Bus Map",
+        btnPlanner: "Daily Family Planner",
+        parentRadarTag: "FAMILY TELEMETRY // ACTIVE",
+        kidsLiveTitle: "Children Live Status & Bus Boarding",
+        requestLocation: "Ping GPS Check-in",
+        kidWelcome: "Сайн уу, Тэмүүлэн! (Hi, Temuulen!)",
+        kidSub: "Tap when you board a bus or arrive at school so Mom & Dad know you're safe.",
+        btnTapBus: "Tap Bus Card (Boarded)",
+        btnImSafe: "I'm Safe at Stop",
+        selectBusLabel: "Select Current Bus:",
+        transitTitle: "Erdenet City Live Bus Map & Arrivals",
+        mapHint: "Click any stop or bus for live ETA",
+        selectedStopLabel: "SELECTED BUS STOP",
+        childAboardHighlight: "Highlighted badge shows which bus your child is aboard",
+        plannerTitle: "Today's Routine & Transit Plan",
+        completionLabel: "Daily Completion",
+        activityTitle: "Live Alerts & Check-ins"
+      },
+      mn: {
+        tagline: "Гэр бүлийн төлөвлөгч ба Автобус хяналт",
+        parentView: "Эцэг эх",
+        kidView: "Хүүхэд",
+        heroPill: "2 Хүүхэд Идэвхтэй • Эрдэнэт Автобус Шууд Холбогдсон",
+        heroTitle1: "Ухаалаг Гэр Бүл &",
+        heroTitle2: "Эрдэнэт Шууд Тээвэр",
+        heroDesc: "Баян-Өндөрийн гэр хорооллоос хотын төв өргөн чөлөө хүртэл — хүүхдүүд тань ямар чиглэлийн автобусанд суусныг шууд харж, өдрийн хуваариа хамтдаа төлөвлөөрэй.",
+        btnLiveMap: "Автобусны Шууд Зураг",
+        btnPlanner: "Өдрийн Төлөвлөгч",
+        parentRadarTag: "ГЭР БҮЛИЙН БАЙРШИЛ // ИДЭВХТЭЙ",
+        kidsLiveTitle: "Хүүхдүүдийн Байршил ба Суусан Автобус",
+        requestLocation: "Байршил Шинэчлэх",
+        kidWelcome: "Сайн уу, Тэмүүлэн!",
+        kidSub: "Автобусанд суухдаа эсвэл буудал дээр очоод картаа уншуулж аав ээждээ мэдэгдээрэй.",
+        btnTapBus: "Автобусны Карт Уншуулах",
+        btnImSafe: "Аюулгүй Очлоо",
+        selectBusLabel: "Сууж буй автобус:",
+        transitTitle: "Эрдэнэт Хотын Автобусны Шууд Зураг",
+        mapHint: "Буудал эсвэл автобус дээр дарж цаг харна уу",
+        selectedStopLabel: "СОНГОСОН БУУДАЛ",
+        childAboardHighlight: "Хүүхэд суусан автобус тод ногооноор харагдана",
+        plannerTitle: "Өнөөдрийн Хичээл ба Тээврийн Хуваарь",
+        completionLabel: "Өдрийн Гүйцэтгэл",
+        activityTitle: "Шууд Мэдэгдэл ба Түүх"
+      }
+    };
+
+    // Children Data
+    const kidsData = [
+      {
+        id: 'kid-1',
+        name: 'Тэмүүлэн (Temuulen)',
+        age: '13 yrs • 1-р Сургууль (School #1)',
+        avatar: 'ТЭ',
+        accent: 'lime',
+        status: 'On Bus Ч:2',
+        statusType: 'transit',
+        busId: 'BUS-204',
+        busRoute: 'Ч:2 Эрдэнэт Үйлдвэр - 5-р Микро',
+        busPlate: '04-82 ОРХ',
+        boardedStop: '1-р хороолол',
+        boardedTime: '16:15',
+        etaDestination: '5-р Микро (6 мин)',
+        battery: '84%',
+        coords: { x: 470, y: 295 }
+      },
+      {
+        id: 'kid-2',
+        name: 'Анужин (Anujin)',
+        age: '10 yrs • 4-р Сургууль (School #4)',
+        avatar: 'АН',
+        accent: 'indigo',
+        status: 'At School / Safe',
+        statusType: 'safe',
+        busId: null,
+        busRoute: 'Last: Ч:1 Найрамдал - 1-р хороолол',
+        busPlate: '11-45 ОРХ',
+        boardedStop: 'Төв талбай (Central Square)',
+        boardedTime: '15:40',
+        etaDestination: 'Codely Junior Lab (Arrived)',
+        battery: '92%',
+        coords: { x: 410, y: 270 }
+      }
+    ];
+
+    // Erdenet City Bus Stops
+    const busStops = [
+      { id: 'STOP-NAIR', code: '#01', name: 'Найрамдал (Nairamdal)', x: 70, y: 310 },
+      { id: 'STOP-KHUR', code: '#02', name: 'Хүрэнбулаг (Khurenbulag)', x: 150, y: 185 },
+      { id: 'STOP-3R',   code: '#03', name: '3-р хороолол (3rd Micro)', x: 230, y: 300 },
+      { id: 'STOP-CENT', code: '#04', name: 'Төв талбай (Central Square)', x: 410, y: 285 },
+      { id: 'STOP-1R',   code: '#05', name: '1-р хороолол (1st Micro)', x: 570, y: 310 },
+      { id: 'STOP-EMC',  code: '#06', name: 'Эрдэнэт Үйлдвэр (EMC)', x: 710, y: 415 },
+      { id: 'STOP-4R',   code: '#07', name: '4-р хороолол (4th Micro)', x: 365, y: 400 },
+      { id: 'STOP-5R',   code: '#08', name: '5-р микро (5th Micro)', x: 240, y: 465 },
+      { id: 'STOP-BAYN', code: '#09', name: 'Баян-Өндөр (Ger Hills)', x: 460, y: 115 }
+    ];
+
+    // Live Erdenet Buses with Waypoints
+    const buses = [
+      {
+        id: 'BUS-204',
+        route: 'Ч:2',
+        routeName: 'Эрдэнэт Үйлдвэр - 5-р Микро',
+        plate: '04-82 ОРХ',
+        color: '#A3E635',
+        occupancy: 'Medium (62%)',
+        speed: '34 km/h',
+        kidAboard: 'Тэмүүлэн',
+        waypoints: [
+          { x: 710, y: 415 }, { x: 570, y: 310 }, { x: 410, y: 285 }, { x: 365, y: 400 }, { x: 240, y: 465 }
+        ],
+        progress: 1.6, // segment index + fraction
+        dir: 1
+      },
+      {
+        id: 'BUS-101',
+        route: 'Ч:1',
+        routeName: 'Найрамдал - 1-р хороолол',
+        plate: '11-45 ОРХ',
+        color: '#10B981',
+        occupancy: 'Low (35%)',
+        speed: '29 km/h',
+        kidAboard: null,
+        waypoints: [
+          { x: 70, y: 310 }, { x: 230, y: 300 }, { x: 410, y: 285 }, { x: 570, y: 310 }
+        ],
+        progress: 0.7,
+        dir: 1
+      },
+      {
+        id: 'BUS-309',
+        route: 'Ч:3',
+        routeName: 'Баян-Өндөр - Төв Талбай',
+        plate: '88-19 ОРХ',
+        color: '#8B5CF6',
+        occupancy: 'High (80%)',
+        speed: '25 km/h',
+        kidAboard: null,
+        waypoints: [
+          { x: 460, y: 115 }, { x: 430, y: 205 }, { x: 410, y: 285 }
+        ],
+        progress: 0.9,
+        dir: 1
+      },
+      {
+        id: 'BUS-402',
+        route: 'Ч:4',
+        routeName: 'Хүрэнбулаг - 3-р хороолол',
+        plate: '52-10 ОРХ',
+        color: '#38BDF8',
+        occupancy: 'Low (40%)',
+        speed: '31 km/h',
+        kidAboard: null,
+        waypoints: [
+          { x: 150, y: 185 }, { x: 230, y: 300 }, { x: 365, y: 400 }
+        ],
+        progress: 0.4,
+        dir: 1
+      }
+    ];
+
+    // Daily Planner Tasks
+    let plannerTasks = [
+      { id: 1, time: '07:45', title: 'Morning Bus Ч:1 to School #1 (1-р хороолол)', kid: 'Тэмүүлэн', bus: 'Ч:1', done: true },
+      { id: 2, time: '08:10', title: 'Drop-off check-in at Central Square Stop', kid: 'Анужин', bus: 'Ч:1', done: true },
+      { id: 3, time: '14:30', title: 'Codely Kids Web & Python Workshop (Central Lab)', kid: 'Анужин', bus: 'Walk', done: true },
+      { id: 4, time: '16:15', title: 'Board Bus Ч:2 (04-82 ОРХ) heading to 5-р Микро', kid: 'Тэмүүлэн', bus: 'Ч:2', done: false },
+      { id: 5, time: '18:00', title: 'Math & Mongolian Literature Homework Sync', kid: 'Тэмүүлэн', bus: 'Home', done: false }
+    ];
+
+    // Live Activity Logs
+    let activityLogs = [
+      { id: 101, time: '16:15', type: 'bus', text: 'Тэмүүлэн boarded Bus Ч:2 (04-82 ОРХ) at 1-р хороолол stop.' },
+      { id: 102, time: '15:42', type: 'safe', text: 'Анужин arrived safely at Codely Lab (Төв талбай).' },
+      { id: 103, time: '14:30', type: 'task', text: 'Анужин checked off "Codely Kids Workshop".' },
+      { id: 104, time: '12:10', type: 'bus', text: 'Bus Ч:2 approaching 1-р хороолол in 2 mins.' }
+    ];
+
+    // ==========================================
+    // 2. HERO CANVAS ANIMATION (ERDENET + GER + BUSES + SNOW)
+    // ==========================================
+    function initHeroCanvas() {
+      const canvas = document.getElementById('heroCanvas');
+      const ctx = canvas.getContext('2d');
+      let width, height;
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        width = canvas.width = rect.width;
+        height = canvas.height = rect.height;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Snow particles
+      const snowflakes = Array.from({ length: 65 }, () => ({
+        x: Math.random() * 1600,
+        y: Math.random() * 500,
+        r: Math.random() * 2.2 + 0.8,
+        vx: -0.4 - Math.random() * 0.6,
+        vy: 0.6 + Math.random() * 1.1,
+        alpha: Math.random() * 0.6 + 0.2
+      }));
+
+      // Smoke particles rising from traditional Gers on the hill
+      const smokeParticles = [];
+      let frame = 0;
+
+      // Animated Buses on the avenue
+      const heroBuses = [
+        { x: width * 0.55, speed: 1.35, color: '#CBD5E1', stripe: '#A3E635', route: 'Ч:2 ЭРДЭНЭТ ҮЙЛДВЭР - 5-Р МИКРО', w: 170, h: 48, laneY: 0 },
+        { x: width * 0.15, speed: 0.95, color: '#10B981', stripe: '#064E3B', route: 'Ч:1 НАЙРАМДАЛ - 1-Р ХОРООЛОЛ', w: 155, h: 44, laneY: 14 }
+      ];
+
+      function drawGer(gx, gy, scale) {
+        ctx.save();
+        ctx.translate(gx, gy);
+        ctx.scale(scale, scale);
+
+        // Warm glow around Ger
+        const grad = ctx.createRadialGradient(0, 0, 4, 0, 0, 42);
+        grad.addColorStop(0, 'rgba(251, 191, 36, 0.35)');
+        grad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, 42, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ger Cylindrical Wall
+        ctx.fillStyle = '#F8FAFC';
+        ctx.beginPath();
+        ctx.roundRect(-26, -8, 52, 20, 2);
+        ctx.fill();
+
+        // Traditional wooden door (orange/red)
+        ctx.fillStyle = '#EA580C';
+        ctx.fillRect(-5, -2, 10, 14);
+
+        // Conical Roof
+        ctx.fillStyle = '#E2E8F0';
+        ctx.beginPath();
+        ctx.moveTo(-29, -8);
+        ctx.lineTo(0, -23);
+        ctx.lineTo(29, -8);
+        ctx.closePath();
+        ctx.fill();
+
+        // Blue/Gold traditional roof band
+        ctx.strokeStyle = '#3B82F6';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-27, -8);
+        ctx.lineTo(27, -8);
+        ctx.stroke();
+
+        // Toono (Crown) & Chimney
+        ctx.fillStyle = '#D97706';
+        ctx.fillRect(-5, -25, 10, 3);
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillRect(4, -31, 3, 8);
+
+        ctx.restore();
+      }
+
+      function animate() {
+        frame++;
+        ctx.clearRect(0, 0, width, height);
+
+        // 1. Distant Bayan-Öndör Snowy Mountains
+        ctx.fillStyle = '#111827';
+        ctx.beginPath();
+        ctx.moveTo(0, height * 0.65);
+        ctx.quadraticCurveTo(width * 0.25, height * 0.32, width * 0.55, height * 0.58);
+        ctx.quadraticCurveTo(width * 0.8, height * 0.28, width, height * 0.52);
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+        ctx.fill();
+
+        // Snow ridge highlight on hill
+        ctx.strokeStyle = 'rgba(226, 232, 240, 0.16)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(width * 0.55, height * 0.58);
+        ctx.quadraticCurveTo(width * 0.8, height * 0.28, width, height * 0.52);
+        ctx.stroke();
+
+        // 2. Traditional Mongolian Gers on the Right Hill (Bayan-Öndör Ger District)
+        const ger1X = width * 0.78;
+        const ger1Y = height * 0.43;
+        const ger2X = width * 0.87;
+        const ger2Y = height * 0.38;
+        const ger3X = width * 0.71;
+        const ger3Y = height * 0.49;
+
+        drawGer(ger2X, ger2Y, 0.85);
+        drawGer(ger1X, ger1Y, 1.05);
+        drawGer(ger3X, ger3Y, 0.92);
+
+        // Emit gentle chimney smoke from Gers
+        if (frame % 18 === 0) {
+          smokeParticles.push({ x: ger1X + 5, y: ger1Y - 32, r: 3, alpha: 0.45, vx: 0.35, vy: -0.55 });
+          smokeParticles.push({ x: ger2X + 4, y: ger2Y - 26, r: 2.5, alpha: 0.38, vx: 0.3, vy: -0.5 });
+        }
+
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+          const p = smokeParticles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.r += 0.08;
+          p.alpha -= 0.004;
+          if (p.alpha <= 0) {
+            smokeParticles.splice(i, 1);
+          } else {
+            ctx.fillStyle = `rgba(226, 232, 240, ${p.alpha})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // 3. Modern Erdenet Apartment Microdistricts (Mid-ground)
+        const buildings = [
+          { x: width * 0.48, w: 68, h: 115, color: '#1E293B' },
+          { x: width * 0.56, w: 82, h: 140, color: '#172033' },
+          { x: width * 0.65, w: 58, h: 95,  color: '#1E293B' },
+          { x: width * 0.91, w: 75, h: 120, color: '#172033' }
+        ];
+        const roadY = height * 0.78;
+
+        buildings.forEach(b => {
+          const by = roadY - b.h;
+          ctx.fillStyle = b.color;
+          ctx.fillRect(b.x, by, b.w, b.h);
+          ctx.strokeStyle = '#334155';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(b.x, by, b.w, b.h);
+
+          // Lit apartment windows
+          for (let wy = by + 12; wy < roadY - 14; wy += 16) {
+            for (let wx = b.x + 10; wx < b.x + b.w - 12; wx += 14) {
+              const isLit = ((wx + wy) % 3 === 0);
+              ctx.fillStyle = isLit ? 'rgba(250, 204, 21, 0.45)' : 'rgba(15, 23, 42, 0.7)';
+              ctx.fillRect(wx, wy, 7, 9);
+            }
+          }
+        });
+
+        // 4. Snowy City Avenue & Streetlights
+        ctx.fillStyle = '#0F172A';
+        ctx.fillRect(0, roadY, width, height - roadY);
+
+        // Snowy curb
+        ctx.fillStyle = '#E2E8F0';
+        ctx.fillRect(0, roadY - 3, width, 4);
+
+        // Dashed road lane line
+        ctx.strokeStyle = 'rgba(163, 230, 53, 0.35)';
+        ctx.setLineDash([18, 14]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, roadY + 26);
+        ctx.lineTo(width, roadY + 26);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 5. Animated Modern Erdenet City Buses
+        heroBuses.forEach(bus => {
+          bus.x += bus.speed;
+          if (bus.x > width + 40) bus.x = -bus.w - 40;
+
+          const by = roadY - bus.h + 10 + bus.laneY;
+
+          // Bus Shadow
+          ctx.fillStyle = 'rgba(0,0,0,0.45)';
+          ctx.beginPath();
+          ctx.roundRect(bus.x + 4, by + bus.h - 4, bus.w - 8, 8, 4);
+          ctx.fill();
+
+          // Bus Body
+          ctx.fillStyle = bus.color;
+          ctx.beginPath();
+          ctx.roundRect(bus.x, by, bus.w, bus.h, 8);
+          ctx.fill();
+
+          // Accent Stripe
+          ctx.fillStyle = bus.stripe;
+          ctx.fillRect(bus.x, by + bus.h * 0.62, bus.w, 6);
+
+          // Dark Window Band
+          ctx.fillStyle = '#09090B';
+          ctx.beginPath();
+          ctx.roundRect(bus.x + 8, by + 7, bus.w - 14, bus.h * 0.44, 4);
+          ctx.fill();
+
+          // LED Route Display inside front windshield
+          ctx.fillStyle = '#A3E635';
+          ctx.font = 'bold 8px Space Grotesk, monospace';
+          ctx.fillText(bus.route.slice(0, 18), bus.x + bus.w - 92, by + 17);
+
+          // Headlight Beam
+          const beam = ctx.createLinearGradient(bus.x + bus.w, by + bus.h - 12, bus.x + bus.w + 75, by + bus.h - 4);
+          beam.addColorStop(0, 'rgba(254, 240, 138, 0.55)');
+          beam.addColorStop(1, 'rgba(254, 240, 138, 0)');
+          ctx.fillStyle = beam;
+          ctx.beginPath();
+          ctx.moveTo(bus.x + bus.w, by + bus.h - 14);
+          ctx.lineTo(bus.x + bus.w + 75, by + bus.h - 24);
+          ctx.lineTo(bus.x + bus.w + 75, by + bus.h + 6);
+          ctx.lineTo(bus.x + bus.w, by + bus.h - 8);
+          ctx.closePath();
+          ctx.fill();
+
+          // Wheels
+          [bus.x + 30, bus.x + bus.w - 30].forEach(wx => {
+            ctx.fillStyle = '#18181B';
+            ctx.beginPath();
+            ctx.arc(wx, by + bus.h, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#71717A';
+            ctx.beginPath();
+            ctx.arc(wx, by + bus.h, 4, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        });
+
+        // 6. Gentle Winter Snow Particles
+        snowflakes.forEach(s => {
+          s.x += s.vx;
+          s.y += s.vy;
+          if (s.y > height) { s.y = -5; s.x = Math.random() * width; }
+          if (s.x < 0) s.x = width;
+          ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    // ==========================================
+    // 3. RENDER KIDS TELEMETRY CARDS
+    // ==========================================
+    function renderKidsCards() {
+      const container = document.getElementById('kids-cards-container');
+      container.innerHTML = kidsData.map(kid => {
+        const isTransit = kid.statusType === 'transit';
+        const badgeStyle = isTransit
+          ? 'bg-lime/15 text-lime border-lime/40'
+          : 'bg-mint/15 text-mint border-mint/40';
+
+        return `
+          <div class="rounded-2xl bg-surface border border-zinc-800 hover:border-zinc-700 p-5 transition flex flex-col justify-between gap-4 brutal-shadow">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-2xl ${kid.accent === 'lime' ? 'bg-lime text-void' : 'bg-indigo text-white'} font-display font-extrabold text-lg flex items-center justify-center shrink-0">
+                  ${kid.avatar}
+                </div>
+                <div>
+                  <h3 class="font-display font-bold text-lg text-white">${kid.name}</h3>
+                  <p class="text-xs text-zinc-400">${kid.age}</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col items-end gap-1.5">
+                <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeStyle} flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full ${isTransit ? 'bg-lime animate-ping' : 'bg-mint'}"></span>
+                  ${kid.status}
+                </span>
+                <span class="text-[11px] font-mono text-zinc-500">🔋 ${kid.battery}</span>
+              </div>
+            </div>
+
+            <!-- Exact Bus Boarding Info Box -->
+            <div class="rounded-xl bg-zinc-900/90 border border-zinc-800 p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <span class="text-[10px] font-mono uppercase text-zinc-500 block">ACTIVE / LAST BUS ROUTE</span>
+                <span class="font-bold text-white mt-0.5 block">${kid.busRoute}</span>
+                <span class="inline-block mt-1 px-2 py-0.5 rounded bg-zinc-800 text-lime font-mono text-[11px]">${kid.busPlate}</span>
+              </div>
+              <div class="sm:border-l sm:border-zinc-800 sm:pl-3 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-mono uppercase text-zinc-500 block">BOARDED STOP & TIME</span>
+                  <span class="text-zinc-200 font-medium">${kid.boardedStop} • <strong class="text-white">${kid.boardedTime}</strong></span>
+                </div>
+                <div class="mt-1.5">
+                  <span class="text-[10px] font-mono uppercase text-zinc-500 block">DESTINATION ETA</span>
+                  <span class="text-mint font-bold">${kid.etaDestination}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <button onclick="focusKidOnMap('${kid.id}')" class="text-xs font-bold text-lime hover:underline flex items-center gap-1">
+                <span>Locate on Erdenet Map →</span>
+              </button>
+              <span class="text-[11px] text-zinc-500 font-mono">NFC Card Verified</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==========================================
+    // 4. INTERACTIVE ERDENET TRANSIT MAP & ARRIVALS
+    // ==========================================
+    function renderStopPills() {
+      const container = document.getElementById('stop-selector-pills');
+      container.innerHTML = busStops.map(stop => {
+        const active = stop.id === selectedStopId;
+        return `
+          <button onclick="selectStop('${stop.id}')" class="px-2.5 py-1 rounded-lg text-xs whitespace-nowrap font-medium transition ${
+            active
+              ? 'bg-lime text-void font-bold'
+              : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+          }">
+            ${stop.name.split(' (')[0]}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectStop(stopId) {
+      selectedStopId = stopId;
+      const stop = busStops.find(s => s.id === stopId);
+      if (stop) {
+        document.getElementById('selected-stop-name').textContent = stop.name;
+        document.getElementById('selected-stop-code').textContent = `STOP ${stop.code}`;
+      }
+      renderStopPills();
+      renderMapStops();
+      renderLiveArrivals();
+    }
+
+    function renderMapStops() {
+      const layer = document.getElementById('map-stops-layer');
+      layer.innerHTML = busStops.map(stop => {
+        const isSelected = stop.id === selectedStopId;
+        return `
+          <g class="cursor-pointer" onclick="selectStop('${stop.id}')">
+            ${isSelected ? `<circle cx="${stop.x}" cy="${stop.y}" r="14" fill="rgba(163, 230, 53, 0.25)" />` : ''}
+            <circle cx="${stop.x}" cy="${stop.y}" r="${isSelected ? 7 : 5}" fill="${isSelected ? '#A3E635' : '#F4F4F5'}" stroke="#09090B" stroke-width="2" />
+            <rect x="${stop.x - 44}" y="${stop.y + 9}" width="88" height="16" rx="4" fill="rgba(9,9,11,0.85)" stroke="${isSelected ? '#A3E635' : '#27272A'}" stroke-width="1" />
+            <text x="${stop.x}" y="${stop.y + 20}" text-anchor="middle" fill="${isSelected ? '#A3E635' : '#D4D4D8'}" font-size="9" font-family="Inter" font-weight="600">
+              ${stop.name.split(' (')[0]}
+            </text>
+          </g>
+        `;
+      }).join('');
+    }
+
+    function updateBusPositions() {
+      buses.forEach(bus => {
+        const maxSeg = bus.waypoints.length - 1;
+        bus.progress += 0.012 * bus.dir;
+        if (bus.progress >= maxSeg) {
+          bus.progress = maxSeg;
+          bus.dir = -1;
+        } else if (bus.progress <= 0) {
+          bus.progress = 0;
+          bus.dir = 1;
+        }
+
+        const segIdx = Math.min(Math.floor(bus.progress), maxSeg - 1);
+        const t = bus.progress - segIdx;
+        const p1 = bus.waypoints[segIdx];
+        const p2 = bus.waypoints[segIdx + 1];
+
+        bus.x = p1.x + (p2.x - p1.x) * t;
+        bus.y = p1.y + (p2.y - p1.y) * t;
+
+        // If Temuulen is aboard this bus, sync his GPS coordinates to the bus!
+        const kidOnThisBus = kidsData.find(k => k.busId === bus.id && k.statusType === 'transit');
+        if (kidOnThisBus) {
+          kidOnThisBus.coords = { x: bus.x, y: bus.y };
+        }
+      });
+
+      renderMapBusesAndKids();
+    }
+
+    function renderMapBusesAndKids() {
+      const busLayer = document.getElementById('map-buses-layer');
+      const filteredBuses = activeRouteFilter === 'ALL'
+        ? buses
+        : buses.filter(b => b.route === activeRouteFilter);
+
+      busLayer.innerHTML = filteredBuses.map(bus => {
+        const hasKid = kidsData.some(k => k.busId === bus.id && k.statusType === 'transit');
+        return `
+          <g transform="translate(${bus.x}, ${bus.y})" class="cursor-pointer" onclick="showToast('Bus ${bus.route} (${bus.plate}) • Speed: ${bus.speed} • ${bus.occupancy}', 'info')">
+            ${hasKid ? `<circle r="18" fill="rgba(163, 230, 53, 0.25)" />` : ''}
+            <rect x="-18" y="-11" width="36" height="22" rx="6" fill="${bus.color}" stroke="#09090B" stroke-width="2" />
+            <text x="0" y="3" text-anchor="middle" fill="#09090B" font-size="10" font-family="Space Grotesk" font-weight="800">${bus.route}</text>
+          </g>
+        `;
+      }).join('');
+
+      // Render Kids GPS Pins
+      const kidsLayer = document.getElementById('map-kids-layer');
+      kidsLayer.innerHTML = kidsData.map(kid => {
+        return `
+          <g transform="translate(${kid.coords.x}, ${kid.coords.y - 22})" class="cursor-pointer" onclick="showToast('${kid.name}: ${kid.status} (${kid.etaDestination})', 'success')">
+            <circle cx="0" cy="0" r="12" fill="${kid.accent === 'lime' ? '#A3E635' : '#8B5CF6'}" stroke="#09090B" stroke-width="2" />
+            <text x="0" y="3.5" text-anchor="middle" fill="${kid.accent === 'lime' ? '#09090B' : '#FFFFFF'}" font-size="8.5" font-family="Space Grotesk" font-weight="800">${kid.avatar}</text>
+            <polygon points="-4,11 4,11 0,17" fill="${kid.accent === 'lime' ? '#A3E635' : '#8B5CF6'}" />
+          </g>
+        `;
+      }).join('');
+    }
+
+    function renderLiveArrivals() {
+      const list = document.getElementById('live-arrivals-list');
+      const stop = busStops.find(s => s.id === selectedStopId) || busStops[0];
+
+      const filteredBuses = activeRouteFilter === 'ALL'
+        ? buses
+        : buses.filter(b => b.route === activeRouteFilter);
+
+      // Compute realistic ETA minutes based on Euclidean distance from bus to selected stop
+      const arrivals = filteredBuses.map(bus => {
+        const dist = Math.hypot((bus.x || 300) - stop.x, (bus.y || 300) - stop.y);
+        const mins = Math.max(1, Math.round(dist / 36));
+        const kidAboardObj = kidsData.find(k => k.busId === bus.id && k.statusType === 'transit');
+        return { ...bus, mins, kidAboardObj };
+      }).sort((a, b) => a.mins - b.mins);
+
+      list.innerHTML = arrivals.map(item => {
+        const isKidInside = Boolean(item.kidAboardObj);
+        return `
+          <div class="p-3.5 rounded-xl border transition ${
+            isKidInside
+              ? 'bg-lime/10 border-lime/50'
+              : 'bg-zinc-900/80 border-zinc-800 hover:border-zinc-700'
+          }">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 rounded-lg font-display font-extrabold text-sm text-void" style="background-color: ${item.color}">
+                  ${item.route}
+                </span>
+                <div>
+                  <div class="text-sm font-bold text-white flex items-center gap-2">
+                    <span>${item.routeName}</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-400 font-mono mt-0.5">
+                    Plate: ${item.plate} • ${item.occupancy}
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-right shrink-0">
+                <div class="font-display font-extrabold text-lg ${item.mins <= 3 ? 'text-lime' : 'text-white'}">
+                  ${item.mins} мин
+                </div>
+                <div class="text-[10px] font-mono text-zinc-500">LIVE GPS</div>
+              </div>
+            </div>
+
+            ${isKidInside ? `
+              <div class="mt-2.5 pt-2 border-t border-lime/25 flex items-center justify-between text-xs">
+                <span class="font-bold text-lime flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-lime animate-ping"></span>
+                  ${item.kidAboardObj.name} is aboard this bus!
+                </span>
+                <span class="font-mono text-[11px] text-zinc-300">Boarded ${item.kidAboardObj.boardedTime}</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterRoute(route) {
+      activeRouteFilter = route;
+      document.querySelectorAll('.route-pill').forEach(btn => {
+        if (btn.dataset.route === route) {
+          btn.className = 'route-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-lime text-void transition';
+        } else {
+          btn.className = 'route-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-zinc-300 border border-zinc-700 hover:border-zinc-500 transition';
+        }
+      });
+
+      // Highlight selected SVG path
+      ['Ч:1', 'Ч:2', 'Ч:3', 'Ч:4'].forEach(r => {
+        const pathEl = document.getElementById(`route-path-${r}`);
+        if (pathEl) {
+          pathEl.style.opacity = (route === 'ALL' || route === r) ? '0.85' : '0.12';
+          pathEl.style.strokeWidth = (route === r) ? '6' : '4';
+        }
+      });
+
+      renderMapBusesAndKids();
+      renderLiveArrivals();
+    }
+
+    function focusKidOnMap(kidId) {
+      const kid = kidsData.find(k => k.id === kidId);
+      if (!kid) return;
+      document.getElementById('transit-section').scrollIntoView({ behavior: 'smooth' });
+      showToast(`Tracking ${kid.name} live on Erdenet Map`, 'success');
+    }
+
+    // ==========================================
+    // 5. DAILY PLANNER & LIVE ACTIVITY FEED
+    // ==========================================
+    function renderPlanner() {
+      const list = document.getElementById('planner-tasks-list');
+      const doneCount = plannerTasks.filter(t => t.done).length;
+      const total = plannerTasks.length;
+      const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+
+      document.getElementById('planner-progress-text').textContent = `${doneCount} / ${total} Done (${pct}%)`;
+      document.getElementById('planner-percent-badge').textContent = `${pct}%`;
+
+      list.innerHTML = plannerTasks.map(task => {
+        return `
+          <div class="flex items-center justify-between gap-3 p-3.5 rounded-xl border transition ${
+            task.done
+              ? 'bg-zinc-900/40 border-zinc-800/70 opacity-75'
+              : 'bg-zinc-900 border-zinc-700/80 hover:border-lime/50'
+          }">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <button onclick="toggleTask(${task.id})" class="w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${
+                task.done
+                  ? 'bg-mint border-mint text-void'
+                  : 'border-zinc-600 hover:border-lime'
+              }">
+                ${task.done ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>' : ''}
+              </button>
+
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono text-xs font-bold text-lime">${task.time}</span>
+                  <span class="text-sm font-semibold ${task.done ? 'line-through text-zinc-500' : 'text-white'} truncate">${task.title}</span>
+                </div>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="px-2 py-0.5 rounded bg-zinc-800 text-[11px] font-medium text-zinc-300">${task.kid}</span>
+                  <span class="px-2 py-0.5 rounded bg-indigo/15 text-indigo border border-indigo/30 text-[11px] font-mono">${task.bus}</span>
+                </div>
+              </div>
+            </div>
+
+            <button onclick="deleteTask(${task.id})" class="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg transition" title="Remove">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleTask(id) {
+      const task = plannerTasks.find(t => t.id === id);
+      if (!task) return;
+      task.done = !task.done;
+      renderPlanner();
+
+      if (task.done) {
+        addActivityLog('task', `${task.kid} completed "${task.title}"`);
+        showToast(`Completed: ${task.title}`, 'success');
+      }
+    }
+
+    function deleteTask(id) {
+      plannerTasks = plannerTasks.filter(t => t.id !== id);
+      renderPlanner();
+    }
+
+    function handleAddTask(e) {
+      e.preventDefault();
+      const titleInput = document.getElementById('task-title-input');
+      const timeInput = document.getElementById('task-time-input');
+      const kidInput = document.getElementById('task-kid-input');
+      const busInput = document.getElementById('task-bus-input');
+
+      const newTask = {
+        id: Date.now(),
+        time: timeInput.value || '17:30',
+        title: titleInput.value.trim(),
+        kid: kidInput.value,
+        bus: busInput.value,
+        done: false
+      };
+
+      plannerTasks.push(newTask);
+      plannerTasks.sort((a, b) => a.time.localeCompare(b.time));
+      titleInput.value = '';
+      renderPlanner();
+      addActivityLog('task', `New schedule item added for ${newTask.kid}: "${newTask.title}"`);
+      showToast('Added to Family Daily Planner', 'success');
+    }
+
+    function renderActivityFeed() {
+      const container = document.getElementById('activity-feed-list');
+      container.innerHTML = activityLogs.map(log => {
+        let dotColor = 'bg-lime';
+        if (log.type === 'safe') dotColor = 'bg-mint';
+        if (log.type === 'task') dotColor = 'bg-indigo';
+        if (log.type === 'sos') dotColor = 'bg-rose-500';
+
+        return `
+          <div class="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/90 flex items-start gap-3">
+            <span class="w-2 h-2 rounded-full ${dotColor} mt-1.5 shrink-0"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-zinc-200 leading-relaxed">${log.text}</p>
+              <span class="text-[10px] font-mono text-zinc-500 mt-1 block">${log.time} • Erdenet Sync</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addActivityLog(type, text) {
+      const now = new Date();
+      const timeStr = now.toTimeString().slice(0, 5);
+      activityLogs.unshift({ id: Date.now(), time: timeStr, type, text });
+      renderActivityFeed();
+    }
+
+    function clearActivityLog() {
+      activityLogs = [];
+      renderActivityFeed();
+    }
+
+    // ==========================================
+    // 6. ROLE SWITCHING & INTERACTIVE ACTIONS
+    // ==========================================
+    function setRole(role) {
+      currentRole = role;
+      const btnParent = document.getElementById('btn-role-parent');
+      const btnKid = document.getElementById('btn-role-kid');
+      const panelParent = document.getElementById('parent-dashboard-panel');
+      const panelKid = document.getElementById('kid-dashboard-panel');
+
+      if (role === 'parent') {
+        btnParent.className = 'px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-lime text-void shadow-sm flex items-center gap-1.5';
+        btnKid.className = 'px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all text-zinc-400 hover:text-white flex items-center gap-1.5';
+        panelParent.classList.remove('hidden');
+        panelKid.classList.add('hidden');
+      } else {
+        btnKid.className = 'px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-indigo text-white shadow-sm flex items-center gap-1.5';
+        btnParent.className = 'px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all text-zinc-400 hover:text-white flex items-center gap-1.5';
+        panelKid.classList.remove('hidden');
+        panelParent.classList.add('hidden');
+      }
+    }
+
+    function kidBoardBusAction() {
+      const select = document.getElementById('kid-bus-select');
+      const selectedBusId = select.value;
+      const bus = buses.find(b => b.id === selectedBusId);
+      const temuulen = kidsData[0];
+
+      if (bus && temuulen) {
+        const nowTime = new Date().toTimeString().slice(0, 5);
+        temuulen.status = `On Bus ${bus.route}`;
+        temuulen.statusType = 'transit';
+        temuulen.busId = bus.id;
+        temuulen.busRoute = `${bus.route} ${bus.routeName}`;
+        temuulen.busPlate = bus.plate;
+        temuulen.boardedTime = nowTime;
+        temuulen.etaDestination = 'Next Stop (4 мин)';
+
+        document.getElementById('kid-current-status-text').textContent = `On Bus ${bus.route} (${bus.plate}) • Boarded at ${nowTime}`;
+        renderKidsCards();
+        renderLiveArrivals();
+        addActivityLog('bus', `NFC Tap: Тэмүүлэн boarded Bus ${bus.route} (${bus.plate}) at ${nowTime}.`);
+        showToast(`NFC Card Synced! Parents notified you boarded ${bus.route}.`, 'success');
+      }
+    }
+
+    function kidSafePingAction() {
+      const temuulen = kidsData[0];
+      const nowTime = new Date().toTimeString().slice(0, 5);
+      temuulen.status = 'Safe at Stop';
+      temuulen.statusType = 'safe';
+      temuulen.busId = null;
+      temuulen.etaDestination = `Arrived (${nowTime})`;
+
+      document.getElementById('kid-current-status-text').textContent = `Safe at Bus Stop (${nowTime})`;
+      renderKidsCards();
+      renderLiveArrivals();
+      addActivityLog('safe', `Тэмүүлэн sent "I'm Safe" check-in at ${nowTime}.`);
+      showToast(`"I'm Safe" ping sent to Mom & Dad!`, 'success');
+    }
+
+    function kidSosAction() {
+      addActivityLog('sos', `URGENT SOS ALERT triggered by Тэмүүлэн with live GPS coordinates!`);
+      showToast(`SOS Alert & Live GPS sent immediately to Parents!`, 'error');
+    }
+
+    function simulateKidPing() {
+      addActivityLog('safe', `GPS Telemetry refreshed for Тэмүүлэн & Анужин in Erdenet.`);
+      showToast('Live GPS & Bus Telemetry synced', 'info');
+    }
+
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'mn' : 'en';
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[currentLang][key]) {
+          el.textContent = i18n[currentLang][key];
+        }
+      });
+      showToast(currentLang === 'mn' ? 'Монгол хэл идэвхжлээ' : 'Switched to English', 'info');
+    }
+
+    // Custom Toast Notification (No alert())
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      let borderClass = 'border-zinc-700 text-white';
+      let dotClass = 'bg-lime';
+
+      if (type === 'success') { borderClass = 'border-lime/50 text-white'; dotClass = 'bg-lime'; }
+      if (type === 'error') { borderClass = 'border-rose-500 text-rose-200'; dotClass = 'bg-rose-500'; }
+
+      toast.className = `pointer-events-auto rounded-xl bg-zinc-900/95 border ${borderClass} px-4 py-3 shadow-2xl backdrop-blur-md flex items-center gap-3 text-xs font-medium transition-all duration-300 transform translate-y-2 opacity-0`;
+      toast.innerHTML = `<span class="w-2.5 h-2.5 rounded-full ${dotClass} shrink-0"></span><span>${message}</span>`;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    // Live Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('live-clock').textContent = now.toTimeString().slice(0, 8);
+    }
+
+    // ==========================================
+    // 7. INITIALIZATION ON WINDOW LOAD
+    // ==========================================
+    window.onload = function () {
+      initHeroCanvas();
+      renderKidsCards();
+      renderStopPills();
+      renderMapStops();
+      updateBusPositions();
+      renderLiveArrivals();
+      renderPlanner();
+      renderActivityFeed();
+      updateClock();
+
+      // Continuous live GPS simulation loop
+      setInterval(updateClock, 1000);
+      setInterval(() => {
+        updateBusPositions();
+      }, 120);
+      setInterval(() => {
+        renderLiveArrivals();
+      }, 3000);
+    };
+  </script>
+</body>
+</html>
